@@ -13,6 +13,9 @@ export function Log() {
         console.log(mmId + '/' + date?.slice(0,4) + '/' + date?.slice(4,8));
         list({
             prefix: mmId + '/' + date?.slice(0,4) + '/' + date?.slice(4,8),
+            options: {
+                listAll: true
+              }
 
         }).then((data) => {
             const folder: Set<string> = new Set();

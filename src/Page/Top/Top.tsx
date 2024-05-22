@@ -10,6 +10,9 @@ export function Top() {
     React.useEffect(() => {
         list({
             prefix: 'MM-',
+            options: {
+                listAll: true
+              }
         
         }).then((data) => {
             const folder: Set<String> = new Set();
