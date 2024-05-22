@@ -15,6 +15,9 @@ export function Mm() {
     console.log(mmId);
     list({
       prefix: mmId + '/',
+      options: {
+        listAll: true
+      }
 
     }).then((data) => {
       const folder: Set<String> = new Set();
