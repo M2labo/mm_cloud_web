@@ -3,7 +3,7 @@ import type { WithAuthenticatorProps } from '@aws-amplify/ui-react';
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import config from './amplifyconfiguration.json';
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {createHashRouter, RouterProvider} from "react-router-dom";
 import { Detail } from './Page/Detail/Detail';
 import { Top } from './Page/Top/Top';
 import { Log } from './Page/Log/Log';
@@ -15,7 +15,7 @@ Amplify.configure(config);
 
 
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
     element: <Top />,

@@ -34,7 +34,7 @@ export function Top() {
                     <li 
                         key={index}
                         >
-                            <a href={`/mm/${mmId}`}>
+                            <a href={`#/mm/${mmId}`}>
                                 {mmId}
                             </a>
                     </li>

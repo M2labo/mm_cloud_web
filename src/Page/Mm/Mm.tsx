@@ -41,7 +41,7 @@ export function Mm() {
               return (
                 <React.Fragment key={index}>
                   <li>
-                          <a href={`/log/${mmId}/${folder}`}>
+                          <a href={`#/log/${mmId}/${folder}`}>
                               {folder}
                           </a>
                   </li>

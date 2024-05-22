@@ -40,7 +40,7 @@ export function Log() {
                         <li 
                             key={index}
                             >
-                                <a href={`/detail/${mmId}/${date}/${folder}`}>
+                                <a href={`#/detail/${mmId}/${date}/${folder}`}>
                                     {folder}
                                 </a>
                         </li>
