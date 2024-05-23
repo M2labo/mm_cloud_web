@@ -3,6 +3,7 @@ import { list } from 'aws-amplify/storage';
 import { useParams } from 'react-router-dom';
 import React, { useState } from 'react'
 import { Summary } from './Summary';
+import { Header } from '../../components/Header/Header';
 
 export function Log() {
     const navigate = useNavigate();
@@ -35,15 +36,18 @@ export function Log() {
         }
     , []);
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Log</h1>
-            <ul className="list-none">
-                {folder.map((folder, index) => (
-                    <li key={index} className="mb-4">
-                        <Summary fileKey={`${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${folder}/summary.csv`} fileName={`${folder?.slice(0, 2)}:${folder?.slice(2, 4)}:${folder?.slice(4, 6)}`} url={`#/detail/${mmId}/${date}/${folder}`} />
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <>
+            <Header />
+            <div className="container mx-auto p-4">
+                <h1 className="text-2xl font-bold mb-4">Log</h1>
+                <ul className="list-none">
+                    {folder.map((folder, index) => (
+                        <li key={index} className="mb-4">
+                            <Summary fileKey={`${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${folder}/summary.csv`} fileName={`${folder?.slice(0, 2)}:${folder?.slice(2, 4)}:${folder?.slice(4, 6)}`} url={`#/detail/${mmId}/${date}/${folder}`} />
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </>
     );
 }
