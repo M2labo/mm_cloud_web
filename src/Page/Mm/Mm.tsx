@@ -42,7 +42,7 @@ export function Mm() {
     <>
       <Header />
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Date</h1>
+        <h1 className="text-2xl font-bold mb-4">日付</h1>
         <ul className="list-none">
           {folder.map((folder, index) => (
             <li key={index} className="mb-4">
