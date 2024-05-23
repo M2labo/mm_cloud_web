@@ -183,32 +183,33 @@ export const Correlation: React.FC<{ mmId: string | undefined; date: string | un
         setYAxisName(item);
     };
 
-    return <div>
-        <select onChange={(e) => setType(e.target.value)} style={{display:"block"}}>
-            <option value="MAVLINK">MAVLINK</option>
-            <option value="CAN">CAN</option>
-            <option value="SYSTEM">SYSTEM</option>
-        </select>
-        <p>相関係数 : {correlationCoefficient.toFixed(6)}</p>
-        <p>回帰直線 : 傾き{slope.toFixed(6)}, 切片{intercept.toFixed(6)}</p>
-        
-        <Plot data={allData} layout={layout} />
-        <div style={{width:"100%", maxWidth:"700px", margin:"10px"}}>
-            <p>X軸を選択</p>
-            {items.map((item, index) => (
-                <button key={index} onClick={() => selectX(item, index)}
-                style={{ backgroundColor: xAxis === index ? '#B0E0E6' : 'initial' }}>
-                    {item}
-                </button>
-            ))}
-            <p>Y軸①を選択</p>
-            {items.map((item, index) => (
-                <button key={index} onClick={() => selectY1(item, index)}
-                style={{ backgroundColor: yAxis === index ? '#B0E0E6' : 'initial' }}>
-                    {item}
-                </button>
-            ))}
+    return (
+        <div className="p-4">
+            <select onChange={(e) => setType(e.target.value)} className="block mb-4 p-2 border rounded">
+                <option value="MAVLINK">MAVLINK</option>
+                <option value="CAN">CAN</option>
+                <option value="SYSTEM">SYSTEM</option>
+            </select>
+            <p>相関係数 : {correlationCoefficient.toFixed(6)}</p>
+            <p>回帰直線 : 傾き{slope.toFixed(6)}, 切片{intercept.toFixed(6)}</p>
 
+            <Plot data={allData} layout={layout} />
+            <div className="w-full max-w-3xl mt-4">
+                <p>X軸を選択</p>
+                {items.map((item, index) => (
+                    <button key={index} onClick={() => selectX(item, index)}
+                        className={`mr-2 mb-2 p-2 rounded ${xAxis === index ? 'bg-blue-300' : 'bg-gray-200 hover:bg-gray-300'}`}>
+                        {item}
+                    </button>
+                ))}
+                <p>Y軸①を選択</p>
+                {items.map((item, index) => (
+                    <button key={index} onClick={() => selectY1(item, index)}
+                        className={`mr-2 mb-2 p-2 rounded ${yAxis === index ? 'bg-blue-300' : 'bg-gray-200 hover:bg-gray-300'}`}>
+                        {item}
+                    </button>
+                ))}
+            </div>
         </div>
-    </div>;
+    );
 };

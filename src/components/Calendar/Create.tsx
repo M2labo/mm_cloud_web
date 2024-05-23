@@ -68,50 +68,44 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
     };
 
     return (
-        <div style={{ overflowWrap: "break-word" }}>
-            <h1>作業予定-作成</h1>
-            <label htmlFor="customer">顧客：</label>
-            <select id="customer" value={customer} onChange={handleCustomerChange}>
+        <div className="p-4 bg-white shadow-md rounded-lg overflow-wrap-break-word">
+            <h1 className="text-2xl font-bold mb-4">作業予定-作成</h1>
+            <label htmlFor="customer" className="block mb-2">顧客：</label>
+            <select id="customer" value={customer} onChange={handleCustomerChange} className="mb-4 p-2 border rounded w-full">
                 <option value="選択してください">選択してください</option>
                 {customers.length > 0 && customers.map(cust => (
                     <option key={cust} value={cust}>{cust}</option>
                 ))}
             </select>
-            <br />
-
-            <label htmlFor="field">圃場：</label>
+            <label htmlFor="field" className="block mb-2">圃場：</label>
             {fieldOptions.length > 0 ? (
-                <select id="field" value={selectedField} onChange={handleFieldChange}>
+                <select id="field" value={selectedField} onChange={handleFieldChange} className="mb-4 p-2 border rounded w-full">
                     <option value="選択してください">選択してください</option>
                     {fieldOptions.map(field => (
                         <option key={field} value={field}>{field}</option>
                     ))}
                 </select>
             ) : (
-                <p>選択した顧客に対応する圃場がありません。</p>
+                <p className="mb-4">選択した顧客に対応する圃場がありません。</p>
             )}
-            <br />
-
             {dates.map((date, index) => (
-                <div key={index}>
-                    <label>予定日：</label>
+                <div key={index} className="mb-4">
+                    <label className="block mb-2">予定日：</label>
                     <input
                         type="date"
                         value={date}
                         onChange={(e) => handleDateChange(index, e.target.value)}
+                        className="p-2 border rounded w-full"
                     />
-                    <br />
                 </div>
             ))}
-            <button onClick={handleAddDate}>予定日を追加</button>
-            <br />
-
-            <label htmlFor="content">内容：</label>
-            <textarea id="content" value={content} onChange={handleContentChange}></textarea>
-            <br />
-
-            <button onClick={handleCreateClick}>作成</button>
-            <button>キャンセル</button>
+            <button onClick={handleAddDate} className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">予定日を追加</button>
+            <label htmlFor="content" className="block mb-2">内容：</label>
+            <textarea id="content" value={content} onChange={handleContentChange} className="mb-4 p-2 border rounded w-full"></textarea>
+            <div className="flex space-x-4">
+                <button onClick={handleCreateClick} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">作成</button>
+                <button className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">キャンセル</button>
+            </div>
         </div>
     );
 };

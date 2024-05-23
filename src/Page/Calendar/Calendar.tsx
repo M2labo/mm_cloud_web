@@ -10,6 +10,7 @@ import { Result } from '../../components/Calendar/Result';
 import { Create } from '../../components/Calendar/Create';
 import { Complete } from '../../components/Calendar/Complete';
 import { EditResult } from '../../components/Calendar/EditResult';
+import { Header } from '../../components/Header/Header'; 
 
 
 export interface Field {
@@ -129,46 +130,48 @@ export function Calendar() {
   ];
 
   return (
-    <div style={{ display: 'flex'}}>
-      <div style={{ width: '70%'}}>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]} 
-          height='100vh'
-          fixedWeekCount={false}
-          initialView="dayGridMonth"
-          locales={[jaLocale]}
-          locale='ja'
-          headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay', 
-          }}
-  
-          eventContent={renderEventContent}
-          events={calendar}
-          // events={eventExample}
-          dateClick={handleDateClick}
-          eventClick={eventClick}
-        />
+    <>
+      <Header />
+      <div className="flex">
+        <div className="w-3/4 p-4">
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]} 
+            height='100vh'
+            fixedWeekCount={false}
+            initialView="dayGridMonth"
+            locales={[jaLocale]}
+            locale='ja'
+            headerToolbar={{
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay', 
+            }}
+            eventContent={renderEventContent}
+            events={calendar}
+            // events={eventExample}
+            dateClick={handleDateClick}
+            eventClick={eventClick}
+          />
+        </div>
+        <div className="w-1/4 p-4 bg-gray-100">
+          { detailDisplay === "create" && selectedDate &&(
+            <Create selectedDate={selectedDate} onCreated={onCreated}/> 
+          )}
+          {detailDisplay === "plan" && selectedReport && (
+            <Plan selectedReport={selectedReport}/>
+          )}
+          { detailDisplay === "complete" && selectedReport && (
+            <Complete selectedReport={selectedReport}/>
+          )}
+          {detailDisplay === "result" && selectedReport && (
+            <Result selectedReport={selectedReport}/>
+          )}
+          {detailDisplay === "editResult" && selectedReport && (
+            <EditResult selectedReport={selectedReport}/>
+          )}
+        </div>
       </div>
-      <div style={{ marginLeft: '50px', width: '30%'}}>
-        { detailDisplay == "create" && selectedDate &&(
-          <Create selectedDate={selectedDate} onCreated={onCreated}/> 
-        )}
-        {detailDisplay == "plan" && selectedReport && (
-          <Plan selectedReport={selectedReport}/>
-        )}
-        { detailDisplay == "complete" && selectedReport && (
-          <Complete selectedReport={selectedReport}/>
-        )}
-        {detailDisplay == "result" && selectedReport && (
-          <Result selectedReport={selectedReport}/>
-        )}
-        {detailDisplay == "editResult" && selectedReport && (
-          <EditResult selectedReport={selectedReport}/>
-        )}
-      </div>
-    </div>
+    </>
   );
 }
 

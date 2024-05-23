@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { list } from '@aws-amplify/storage'
 import React ,{ useState } from 'react';
 import { Summary } from '../Log/Summary';
+import { Header } from '../../components/Header/Header'; 
 
 
 export function Top() {
@@ -30,23 +31,18 @@ export function Top() {
     
     return (
         <>
-            <h1>MobileMover</h1>
-            {mm.map((mmId, index) => {
-                return (
-                    <>
-                    <li 
-                        key={index}
-                        >
-                            <a href={`#/mm/${mmId}`}>
-                                {mmId}
-                            </a>
-                    </li>
-                    <Summary fileKey={`${mmId}/summary.csv`} />
-                    </>
-                );
-            }
-            )}
-            
+            <Header />
+            <div className="container mx-auto p-4">
+                <h1 className="text-2xl font-bold mb-4">MobileMover</h1>
+                <ul className="list-none">
+                    {mm.map((mmId, index) => (
+                        <li key={index} className="mb-2">
+                 
+                            <Summary fileKey={`${mmId}/summary.csv`} fileName={mmId.valueOf()} url={`#/mm/${mmId}`}/>
+                        </li>
+                    ))}
+                </ul>
+            </div>
         </>
     );
 }

@@ -198,39 +198,41 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
                     };
     };
 
-    return <div>
-        <select onChange={(e) => setType(e.target.value)} style={{display:"block"}}>
-            <option value="MAVLINK">MAVLINK</option>
-            <option value="CAN">CAN</option>
-            <option value="SYSTEM">SYSTEM</option>
-        </select>
-        <p>選択範囲 : {xAxisMin} - {xAxisMax}</p>
-        <p>Y軸① : 最大{max.toFixed(6)}, 最小{min.toFixed(6)},平均{average.toFixed(6)}, 分散{variance.toFixed(6)}</p>
-        <p>Y軸② : 最大{max2.toFixed(6)}, 最小{min2.toFixed(6)},平均{average2.toFixed(6)}, 分散{variance2.toFixed(6)}</p>
-        
-        <Plot data={allData} layout={layout} onRelayout={(e) => handleRelayout(e)} />
-        <div style={{width:"100%", maxWidth:"700px", margin:"10px"}}>
-            <p>X軸を選択</p>
-            {items.map((item, index) => (
-                <button key={index} onClick={() => selectX(item, index)}
-                style={{ backgroundColor: xAxis === index ? '#B0E0E6' : 'initial' }}>
-                    {item}
-                </button>
-            ))}
-            <p>Y軸①を選択</p>
-            {items.map((item, index) => (
-                <button key={index} onClick={() => selectY1(item, index)}
-                style={{ backgroundColor: yAxis === index ? '#B0E0E6' : 'initial' }}>
-                    {item}
-                </button>
-            ))}
-            <p>Y軸②を選択</p>
-            {items.map((item, index) => (
-                <button key={index} onClick={() => selectY2(item, index)}
-                style={{ backgroundColor: yAxis2 === index ? '#B0E0E6' : 'initial' }}>
-                    {item}
-                </button>
-            ))}
+    return (
+        <div className="p-4">
+            <select onChange={(e) => setType(e.target.value)} className="mb-4 p-2 border rounded">
+                <option value="MAVLINK">MAVLINK</option>
+                <option value="CAN">CAN</option>
+                <option value="SYSTEM">SYSTEM</option>
+            </select>
+            <p>選択範囲 : {xAxisMin} - {xAxisMax}</p>
+            <p>Y軸① : 最大{max.toFixed(6)}, 最小{min.toFixed(6)},平均{average.toFixed(6)}, 分散{variance.toFixed(6)}</p>
+            <p>Y軸② : 最大{max2.toFixed(6)}, 最小{min2.toFixed(6)},平均{average2.toFixed(6)}, 分散{variance2.toFixed(6)}</p>
+
+            <Plot data={allData} layout={layout} onRelayout={(e) => handleRelayout(e)} />
+            <div className="w-full max-w-3xl mt-4">
+                <p>X軸を選択</p>
+                {items.map((item, index) => (
+                    <button key={index} onClick={() => selectX(item, index)}
+                        className={`mr-2 mb-2 p-2 rounded ${xAxis === index ? 'bg-blue-300' : 'bg-gray-200 hover:bg-gray-300'}`}>
+                        {item}
+                    </button>
+                ))}
+                <p>Y軸①を選択</p>
+                {items.map((item, index) => (
+                    <button key={index} onClick={() => selectY1(item, index)}
+                        className={`mr-2 mb-2 p-2 rounded ${yAxis === index ? 'bg-blue-300' : 'bg-gray-200 hover:bg-gray-300'}`}>
+                        {item}
+                    </button>
+                ))}
+                <p>Y軸②を選択</p>
+                {items.map((item, index) => (
+                    <button key={index} onClick={() => selectY2(item, index)}
+                        className={`mr-2 mb-2 p-2 rounded ${yAxis2 === index ? 'bg-blue-300' : 'bg-gray-200 hover:bg-gray-300'}`}>
+                        {item}
+                    </button>
+                ))}
+            </div>
         </div>
-    </div>;
+    );
 };
