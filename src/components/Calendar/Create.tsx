@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
+interface Customer {
+    id: number;
+    name: string;
+    fields: {
+        id: number;
+        name: string;
+    }[];
+}
+
 interface CreateProps {
     selectedDate: string;
     onCreated: (title: string, start: string, groupId: string, content: string) => void;
@@ -7,12 +16,11 @@ interface CreateProps {
 
 export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
     const [customer, setCustomer] = useState<string>('選択してください');
-    const [fieldOptions, setFieldOptions] = useState<string[]>([]);
+    const [fieldOptions, setFieldOptions] = useState<{ id: number, name: string }[]>([]);
     const [selectedField, setSelectedField] = useState('選択してください');
     const [dates, setDates] = useState([selectedDate]);
     const [content, setContent] = useState('');
-    const [customers, setCustomers] = useState<string[]>([]);
-    const [fieldsByCustomer, setFieldsByCustomer] = useState<{ [key: string]: string[] }>({});
+    const [customers, setCustomers] = useState<Customer[]>([]);
 
     useEffect(() => {
         // APIからデータを取得する
@@ -20,11 +28,8 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
             .then(response => response.json())
             .then((data: any) => {
                 console.log(data); // レスポンスデータの形式を確認
-
-                if (data && data.result) {
-                    const { customers, fieldsByCustomer } = data.result;
-                    setCustomers(customers || []);
-                    setFieldsByCustomer(fieldsByCustomer || {});
+                if (data && data.result && Array.isArray(data.result.customers)) {
+                    setCustomers(data.result.customers);
                 } else {
                     console.error('Unexpected data format:', data);
                 }
@@ -35,7 +40,13 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
     const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedCustomer = event.target.value;
         setCustomer(selectedCustomer);
-        setFieldOptions(fieldsByCustomer[selectedCustomer] || []);
+
+        const customerObj = customers.find(cust => cust.id.toString() === selectedCustomer);
+        if (customerObj) {
+            setFieldOptions(customerObj.fields);
+        } else {
+            setFieldOptions([]);
+        }
     };
 
     const handleFieldChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -57,13 +68,46 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
         setDates(newDates);
     };
 
-    const handleCreateClick = () => {
-        if (customer !== '選択してください' && selectedField !== '選択してください') {
-            for (let i = 0; i < dates.length; i++) {
-                onCreated(customer + "/" + selectedField, dates[i], 'plan', content);
+    const handleCreateClick = async () => {
+        console.log('Create clicked');
+        console.log(customer, selectedField, dates, content);
+        try {
+            const selectedCustomer = customers.find(cust => cust.id.toString() === customer);
+            const selectedFieldObj = fieldOptions.find(field => field.name === selectedField);
+
+            if (!selectedCustomer || !selectedFieldObj) {
+                alert('顧客または圃場が正しく選択されていません。');
+                return;
             }
-        } else {
-            console.error("データが不完全です。");
+
+            const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
+            console.log('Selected customer:', selectedCustomer.id);
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    data: {
+                        customer_id: selectedCustomer.id,
+                        field_id: selectedFieldObj.id,
+                        plans: dates,
+                        date: null,
+                        report: content
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log('Success:', data);
+            // selectedReport.onChangeDetail("result");
+        } catch (error) {
+            console.error('Error:', error);
         }
     };
 
@@ -73,8 +117,8 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
             <label htmlFor="customer" className="block mb-2">顧客：</label>
             <select id="customer" value={customer} onChange={handleCustomerChange} className="mb-4 p-2 border rounded w-full">
                 <option value="選択してください">選択してください</option>
-                {customers.length > 0 && customers.map(cust => (
-                    <option key={cust} value={cust}>{cust}</option>
+                {Array.isArray(customers) && customers.map(cust => (
+                    <option key={cust.id} value={cust.id.toString()}>{cust.name}</option>
                 ))}
             </select>
             <label htmlFor="field" className="block mb-2">圃場：</label>
@@ -82,7 +126,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
                 <select id="field" value={selectedField} onChange={handleFieldChange} className="mb-4 p-2 border rounded w-full">
                     <option value="選択してください">選択してください</option>
                     {fieldOptions.map(field => (
-                        <option key={field} value={field}>{field}</option>
+                        <option key={field.id} value={field.name}>{field.name}</option>
                     ))}
                 </select>
             ) : (
@@ -99,12 +143,12 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
                     />
                 </div>
             ))}
-            <button onClick={handleAddDate} className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">予定日を追加</button>
+            <button type="button" onClick={handleAddDate} className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">予定日を追加</button>
             <label htmlFor="content" className="block mb-2">内容：</label>
             <textarea id="content" value={content} onChange={handleContentChange} className="mb-4 p-2 border rounded w-full"></textarea>
             <div className="flex space-x-4">
-                <button onClick={handleCreateClick} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">作成</button>
-                <button className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">キャンセル</button>
+                <button type="button" onClick={handleCreateClick} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">作成</button>
+                <button type="button" className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">キャンセル</button>
             </div>
         </div>
     );
