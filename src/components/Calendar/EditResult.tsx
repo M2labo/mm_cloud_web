@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { ReportProps } from "../../Page/Calendar/Calendar";
 
 export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
-    const [selectedDate, setSelectedDate] = useState('');
+    const [selectedDate, setSelectedDate] = useState(selectedReport.date);
     const [comments, setComments] = useState<string[]>(Array(selectedReport.plans.length).fill(''));
+    const [reportContent, setReportContent] = useState(selectedReport.report);
 
     const handleCancelClick = () => {
         selectedReport.onChangeDetail("result");
@@ -24,7 +25,8 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
                 body: JSON.stringify({
                     data: {
                         date: selectedDate,
-                        comments: comments
+                        comments: comments,
+                        report: reportContent
                     }
                 })
             });
@@ -72,7 +74,7 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
                             {plan}
                         </label>
                         <textarea
-                            placeholder="コメントを記載"
+                            placeholder="延期理由等のコメントを記載"
                             value={comments[index]}
                             onChange={(e) => handleCommentChange(index, e.target.value)}
                             className="mt-2 p-2 border rounded w-full"
@@ -81,7 +83,12 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
                 ))}
             </ul>
             <label htmlFor="content" className="block mb-2">内容：</label>
-            <textarea id="content" defaultValue={selectedReport.report} className="p-2 border rounded w-full mb-4"></textarea>
+            <textarea 
+                id="content" 
+                value={reportContent} 
+                onChange={(e) => setReportContent(e.target.value)} 
+                className="p-2 border rounded w-full mb-4"
+            ></textarea>
             <div className="flex space-x-4">
                 <button onClick={() => handleCompletion()} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">更新</button>
                 <button onClick={handleCancelClick} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">キャンセル</button>

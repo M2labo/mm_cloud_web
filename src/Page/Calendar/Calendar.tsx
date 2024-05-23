@@ -46,7 +46,7 @@ export function Calendar() {
   const [selectedDate, setSelectedDate] = useState<string>();
   const [prevEvent, setPrevEvent] = useState<any>();
   const [calendar, setCalendar] = useState<Event[]>([]);
-  const [detailDisplay, setDetailDisplay] = useState<string>();
+  const [detailDisplay, setDetailDisplay] = useState<string>("create");
   const [selectedReport, setSelectedReport] = useState<Report>();
   
   //新しい予定を作成したときの処理
@@ -136,7 +136,7 @@ export function Calendar() {
         <div className="w-3/4 p-4">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]} 
-            height='100vh'
+            height='90vh'
             fixedWeekCount={false}
             initialView="dayGridMonth"
             locales={[jaLocale]}
@@ -154,8 +154,8 @@ export function Calendar() {
           />
         </div>
         <div className="w-1/4 p-4 bg-gray-100">
-          { detailDisplay === "create" && selectedDate &&(
-            <Create selectedDate={selectedDate} onCreated={onCreated}/> 
+          { detailDisplay === "create" && (
+            <Create selectedDate={selectedDate} onChangeDetail={onChangeDetail}/> 
           )}
           {detailDisplay === "plan" && selectedReport && (
             <Plan selectedReport={selectedReport}/>

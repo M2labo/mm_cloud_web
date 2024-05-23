@@ -10,11 +10,11 @@ interface Customer {
 }
 
 interface CreateProps {
-    selectedDate: string;
-    onCreated: (title: string, start: string, groupId: string, content: string) => void;
+    selectedDate?: string;
+    onChangeDetail: (detail:string) => void;
 }
 
-export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
+export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) => {
     const [customer, setCustomer] = useState<string>('選択してください');
     const [fieldOptions, setFieldOptions] = useState<{ id: number, name: string }[]>([]);
     const [selectedField, setSelectedField] = useState('選択してください');
@@ -105,7 +105,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onCreated }) => {
 
             const data = await response.json();
             console.log('Success:', data);
-            // selectedReport.onChangeDetail("result");
+            onChangeDetail("plan");
         } catch (error) {
             console.error('Error:', error);
         }
