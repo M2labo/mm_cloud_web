@@ -49,40 +49,43 @@ export const Complete: React.FC<ReportProps> = ({ selectedReport }) => {
     };
 
     return (
-        <div style={{ overflowWrap: "break-word" }}>
-            <h1>作業予定-完了</h1>
-            <p>顧客：{selectedReport.customer}  </p>
-            <p>
+        <div className="p-4 bg-white shadow-md rounded-lg overflow-wrap-break-word">
+            <h1 className="text-2xl font-bold mb-4">作業予定-完了</h1>
+            <p className="mb-2">顧客：{selectedReport.customer}</p>
+            <p className="mb-2">
                 圃場：{selectedReport.field.name} ({selectedReport.field.area}a) /
-                <a href={selectedReport.field.url} target="_blank" rel="noreferrer noopener">Mapを表示</a>
+                <a href={selectedReport.field.url} target="_blank" rel="noreferrer noopener" className="text-blue-500 hover:underline">Mapを表示</a>
             </p>
-            <p>予定日：</p>
-            <ul style={{ listStyleType: "none", padding: 0 }}>
+            <p className="mb-2">予定日：</p>
+            <ul className="mb-4 list-none p-0">
                 {selectedReport.plans.map((plan, index) => (
-                    <li key={index}>
-                        <input
-                            type="radio"
-                            name="selectedDate"
-                            value={plan}
-                            checked={selectedDate === plan}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                        />
-                        {plan}
-                        <br />
+                    <li key={index} className="mb-2">
+                        <label className="flex items-center">
+                            <input
+                                type="radio"
+                                name="selectedDate"
+                                value={plan}
+                                checked={selectedDate === plan}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                className="mr-2"
+                            />
+                            {plan}
+                        </label>
                         <textarea
                             placeholder="コメントを記載"
                             value={comments[index]}
                             onChange={(e) => handleCommentChange(index, e.target.value)}
-                            style = {{marginLeft: "40px"}}
+                            className="mt-2 p-2 border rounded w-full"
                         />
                     </li>
                 ))}
             </ul>
-            <label htmlFor="content">内容：</label>
-            <textarea id="content" defaultValue={selectedReport.report}></textarea>
-            <br />
-            <button onClick={() => handleCompletion()}>作業完了</button>
-            <button onClick={handleCancelClick}>キャンセル</button>
+            <label htmlFor="content" className="block mb-2">内容：</label>
+            <textarea id="content" defaultValue={selectedReport.report} className="p-2 border rounded w-full mb-4"></textarea>
+            <div className="flex space-x-4">
+                <button onClick={() => handleCompletion()} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">作業完了</button>
+                <button onClick={handleCancelClick} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">キャンセル</button>
+            </div>
         </div>
     );
 }

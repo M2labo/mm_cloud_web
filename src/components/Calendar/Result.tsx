@@ -2,7 +2,7 @@ import React from 'react';
 import { ReportProps } from "../../Page/Calendar/Calendar";
 
 export const Result: React.FC<ReportProps> = ({ selectedReport }) => {
-    const logUrl = `/log/MM-00046/${selectedReport.date.replace(/-/g, '')}`;
+    const logUrl = selectedReport.date ? `/log/MM-00046/${selectedReport.date.replace(/-/g, '')}` : '#'
     const handleEdit = () => {
         selectedReport.onChangeDetail("editResult");
     }
@@ -38,26 +38,28 @@ export const Result: React.FC<ReportProps> = ({ selectedReport }) => {
     };
 
     return (
-        <div style={{ overflowWrap: "break-word" }}>
-            <h1>作業結果-詳細</h1>
-            <p>顧客：{selectedReport.customer}  </p>
-            <p>
+        <div className="p-4 bg-white shadow-md rounded-lg overflow-wrap-break-word">
+            <h1 className="text-2xl font-bold mb-4">作業結果-詳細</h1>
+            <p className="mb-2">顧客：{selectedReport.customer}</p>
+            <p className="mb-2">
                 圃場：{selectedReport.field.name} ({selectedReport.field.area}a) /&nbsp;
-                <a href={selectedReport.field.url} target="_blank" rel="noreferrer noopener">Mapを表示</a>
+                <a href={selectedReport.field.url} target="_blank" rel="noreferrer noopener" className="text-blue-500 hover:underline">Mapを表示</a>
             </p>
-            <p>
+            <p className="mb-2">
                 実施日：{selectedReport.date} /&nbsp;
-                <a href={logUrl} target="_blank" rel="noreferrer noopener">Logを表示</a>
+                <a href={`#${logUrl}`} target="_blank" rel="noreferrer noopener" className="text-blue-500 hover:underline">Logを表示</a>
             </p>
-            <p>予定日：</p>
-            <ul>
+            <p className="mb-2">予定日：</p>
+            <ul className="mb-4 list-disc list-inside">
                 {selectedReport.plans.map((plan, index) => (
                     <li key={index}>{plan}</li>
                 ))}
             </ul>
-            <p>内容：{selectedReport.report}</p>
-            <button onClick={handleEdit}>編集</button>
-            <button onClick={handleUndoCompletion}>予定に戻す</button>
+            <p className="mb-4">内容：{selectedReport.report}</p>
+            <div className="flex space-x-4">
+                <button onClick={handleEdit} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">編集</button>
+                <button onClick={handleUndoCompletion} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">予定に戻す</button>
+            </div>
         </div>
     );
 };

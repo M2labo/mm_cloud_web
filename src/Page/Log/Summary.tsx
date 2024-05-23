@@ -19,8 +19,9 @@ async function getMavlink(fileKey: string | undefined): Promise<string> {
     }
 }
 
-export const Summary: React.FC<{ fileKey: string }> = ({ fileKey }) => {
+export const Summary: React.FC<{ fileKey: string, fileName: string, url:string }> = ({ fileKey, fileName, url }) => {
     const [dataFrame, setDataFrame] = useState<string[][]>([]);
+    
 
     useEffect(() => {
         let isSubscribed = true; // Flag to prevent state update if the component is unmounted
@@ -51,21 +52,20 @@ export const Summary: React.FC<{ fileKey: string }> = ({ fileKey }) => {
     }, [fileKey]); // Dependency array to re-run effect when these props change
     
     if (dataFrame.length <= 2) {
-        return <div>No data available.</div>;
+        return (
+            <div className="p-4 bg-white shadow-md rounded-lg my-4">
+                <p className="text-lg font-semibold mb-2"><a href={url}>{fileName}</a></p>
+                <p>No data available.</p>
+            </div>
+        );
     }
+    return (
+        <a href={url}>
+        <div className="p-4 bg-white shadow-md rounded-lg my-4">
+            <p className="text-lg font-semibold mb-2">{fileName}</p>
+            <p>走行時間：{dataFrame[1][0].substring(0, 5)}秒, 走行距離：{dataFrame[1][1].substring(0, 5)}m, 散布量：{dataFrame[1][2].substring(0, 5)}L, 消費電力：{dataFrame[1][3].substring(0, 5)}Wh</p>
 
-    return <div>
-        <p>走行時間：{dataFrame[1][0].substring(0,5)}秒, 走行距離：{dataFrame[1][1].substring(0,5)}m, 散布量：{dataFrame[1][2].substring(0,5)}L, 消費電力：{dataFrame[1][3].substring(0,5)}Wh</p>
-        {/* <table style={{border:"1px #808080 solid", borderCollapse:"collapse", marginTop:"10px"}}>
-            <tbody>
-                {dataFrame.map((row, i) => (
-                    <tr key={i} >
-                        {row.map((cell, j) => (
-                            <td key={j} style={{border:"1px #808080 solid", padding:"5px"}}>{cell}</td>
-                        ))}
-                    </tr>
-                ))}
-            </tbody>
-        </table> */}
-    </div>;
+        </div>
+        </a>
+    );
 };
