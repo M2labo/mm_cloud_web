@@ -40,7 +40,7 @@ export function Log() {
             <ul className="list-none">
                 {folder.map((folder, index) => (
                     <li key={index} className="mb-4">
-                        <Summary fileKey={`${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${folder}/summary.csv`} fileName={folder} url={`#/detail/${mmId}/${date}/${folder}`} />
+                        <Summary fileKey={`${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${folder}/summary.csv`} fileName={`${folder?.slice(0, 2)}:${folder?.slice(2, 4)}:${folder?.slice(4, 6)}`} url={`#/detail/${mmId}/${date}/${folder}`} />
                     </li>
                 ))}
             </ul>
