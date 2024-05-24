@@ -11,6 +11,8 @@ import { Create } from '../../components/Calendar/Create';
 import { Complete } from '../../components/Calendar/Complete';
 import { EditResult } from '../../components/Calendar/EditResult';
 import { Header } from '../../components/Header/Header'; 
+import { co } from '@fullcalendar/core/internal-common';
+import { idText } from 'typescript';
 
 
 export interface Field {
@@ -50,18 +52,59 @@ export function Calendar() {
   const [selectedReport, setSelectedReport] = useState<Report>();
   
   //新しい予定を作成したときの処理
-  const onCreated = (title:string, start:string, groupId:string,content:string) => { 
-    setCalendar(currentEvents => [...currentEvents, { title: title , start: start, groupId: groupId, description: content}]);
+  const onCreated = (detail:string) => { 
+    setDetailDisplay(detail);
+    
   }
 
   //詳細画面を変更するときの処理
-  const onChangeDetail = (detail:string) => {
-    setDetailDisplay(detail);
+  const onChangeDetail = async(detail:string, id?:number) => {    
+    if(selectedReport){
+      id = selectedReport.id;
+    }
+    if(id){
+      //APIから詳細情報を取得
+      try {
+        const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
+        const filter = JSON.stringify({ id: id });
+        url.searchParams.append('filter', filter);
+        console.log("filter");
+        console.log(filter);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('Success:', data);
+        console.log(data.result.plans);
+
+        setSelectedReport({
+          id: id,
+          customer: data.result.customer,
+          field: data.result.field,
+          date: data.result.date,
+          plans: data.result.plans,
+          report: data.result.report,
+          onChangeDetail: onChangeDetail
+        });
+      } catch (error) {
+          console.error('Error:', error);
+      }   
+    }
+      setDetailDisplay(detail);
   }
   
   //日付をクリックしたときの処理
   const handleDateClick = (arg:any) => {
     setSelectedDate(arg.dateStr);
+    setSelectedReport(undefined);
     setDetailDisplay("create");
   }
 
@@ -144,7 +187,7 @@ export function Calendar() {
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay', 
+              right: 'dayGridMonth,timeGridWeek', 
             }}
             eventContent={renderEventContent}
             events={calendar}

@@ -11,7 +11,7 @@ interface Customer {
 
 interface CreateProps {
     selectedDate?: string;
-    onChangeDetail: (detail:string) => void;
+    onChangeDetail: (detail:string,id:number) => void;
 }
 
 export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) => {
@@ -27,6 +27,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
         fetch('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/all_customer')
             .then(response => response.json())
             .then((data: any) => {
+                console.log("create"); 
                 console.log(data); // レスポンスデータの形式を確認
                 if (data && data.result && Array.isArray(data.result.customers)) {
                     setCustomers(data.result.customers);
@@ -105,7 +106,8 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
 
             const data = await response.json();
             console.log('Success:', data);
-            onChangeDetail("plan");
+            console.log('Plan created:', data.result['id']);
+            onChangeDetail("plan", data.result['id']);
         } catch (error) {
             console.error('Error:', error);
         }
