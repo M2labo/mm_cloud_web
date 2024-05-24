@@ -7,7 +7,7 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
     const [reportContent, setReportContent] = useState(selectedReport.report);
 
     const handleCancelClick = () => {
-        selectedReport.onChangeDetail("result");
+        selectedReport.onChangeDetail("result", selectedReport.id);
     }
 
     const handleCompletion = async () => {
@@ -37,7 +37,7 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
 
             const data = await response.json();
             console.log('Success:', data);
-            selectedReport.onChangeDetail("result");
+            selectedReport.onChangeDetail("result", selectedReport.id);
         } catch (error) {
             console.error('Error:', error);
         }

@@ -39,7 +39,7 @@ export interface Report {
   date: string;
   plans: string[];
   report?: string; 
-  onChangeDetail: (detail:string) => void;
+  onChangeDetail: (detail:string, id?:number) => void;
 }
 
 export interface ReportProps {
@@ -56,11 +56,10 @@ export function Calendar() {
   
   //詳細画面を変更するときの処理
   const onChangeDetail = async(detail:string, id?:number) => {    
-    if(selectedReport){
-      id = selectedReport.id;
-    }
+    //情報を変更したときに再取得するための処理
     if(id){
       //APIから詳細情報を取得
+      console.log("詳細画面を変更");
       try {
         const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
         const filter = JSON.stringify({ id: id });
@@ -108,7 +107,7 @@ export function Calendar() {
 
   //イベントをクリックしたときの処理
   const eventClick= async(info:any) => {
-    // change the border color 
+    // 選択中のイベントの枠を赤くする
     prevEvent?.style.removeProperty('border-color');
     info.el.style.borderColor = 'red';
     setPrevEvent(info.el);

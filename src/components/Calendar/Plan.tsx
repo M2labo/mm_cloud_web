@@ -8,10 +8,10 @@ import { co } from "@fullcalendar/core/internal-common";
 export const Plan: React.FC<ReportProps> = ({ selectedReport }) => {
     const [edit, setEdit] = useState(false);
     const handleCompleteClick = () => {
-        selectedReport.onChangeDetail("complete");
+        selectedReport.onChangeDetail("complete", selectedReport.id);
     }
     const handleEditClick = () => {
-        selectedReport.onChangeDetail("editPlan");
+        selectedReport.onChangeDetail("editPlan", selectedReport.id);
     }
     const handleDelete = async () => {
         const confirmDelete = window.confirm('本当にこの予定を削除しますか？');

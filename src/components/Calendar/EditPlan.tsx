@@ -79,6 +79,7 @@ export const EditPlan: React.FC<ReportProps> = ({ selectedReport }) => {
     const handleAddDate = () => {
         setDates([...dates, '']);
     };
+
     const handleDeleteDate = (index: number) => {
         const newDates = [...dates];
         newDates.splice(index, 1);
@@ -130,14 +131,14 @@ export const EditPlan: React.FC<ReportProps> = ({ selectedReport }) => {
             const data = await response.json();
             console.log('Success:', data);
             console.log('Plan created:', data.result['id']);
-            selectedReport.onChangeDetail("plan");
+            selectedReport.onChangeDetail("plan", selectedReport.id);
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
     const handleCancelClick = () => {
-        selectedReport.onChangeDetail("plan");
+        selectedReport.onChangeDetail("plan", selectedReport.id);
     }
 
     return (
@@ -161,9 +162,10 @@ export const EditPlan: React.FC<ReportProps> = ({ selectedReport }) => {
             ) : (
                 <p className="mb-4">選択した顧客に対応する圃場がありません。</p>
             )}
+            <label className="block mb-2 flex-grow">予定日：</label>
             {dates.map((date, index) => (
                 <div key={index} className="mb-4 ">
-                    <label className="block mb-2 flex-grow">予定日：</label>
+                    
                     <div className="flex items-center">
                         <input
                             type="date"

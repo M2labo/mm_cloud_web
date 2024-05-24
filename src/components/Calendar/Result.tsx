@@ -4,7 +4,7 @@ import { ReportProps } from "../../Page/Calendar/Calendar";
 export const Result: React.FC<ReportProps> = ({ selectedReport }) => {
     const logUrl = selectedReport.date ? `/log/MM-00046/${selectedReport.date.replace(/-/g, '')}` : '#'
     const handleEdit = () => {
-        selectedReport.onChangeDetail("editResult");
+        selectedReport.onChangeDetail("editResult", selectedReport.id);
     }
     const handleUndoCompletion = async () => {
         
@@ -31,7 +31,7 @@ export const Result: React.FC<ReportProps> = ({ selectedReport }) => {
 
             const data = await response.json();
             console.log('Success:', data);
-            selectedReport.onChangeDetail("plan");
+            selectedReport.onChangeDetail("plan", selectedReport.id);
         } catch (error) {
             console.error('Error:', error);
         }
