@@ -10,10 +10,13 @@ export const Plan: React.FC<ReportProps> = ({ selectedReport }) => {
     const handleCompleteClick = () => {
         selectedReport.onChangeDetail("complete");
     }
+    const handleEditClick = () => {
+        selectedReport.onChangeDetail("editPlan");
+    }
     const handleDelete = async () => {
         const confirmDelete = window.confirm('本当にこの予定を削除しますか？');
         if (!confirmDelete) return;
-        
+
         try {
             const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
             const filter = JSON.stringify({ id: selectedReport.id });
@@ -55,7 +58,7 @@ export const Plan: React.FC<ReportProps> = ({ selectedReport }) => {
             <p className="mb-4">内容：{selectedReport.report}</p>
             <div className="flex space-x-4">
                 <button onClick={handleCompleteClick} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">作業完了</button>
-                <button className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-700">予定変更</button>
+                <button onClick={handleEditClick} className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-700">予定変更</button>
                 <button onClick={handleDelete} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">予定削除</button>
             </div>
         </div>

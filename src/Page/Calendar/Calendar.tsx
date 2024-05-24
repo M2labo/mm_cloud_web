@@ -9,6 +9,7 @@ import { Plan } from '../../components/Calendar/Plan';
 import { Result } from '../../components/Calendar/Result';
 import { Create } from '../../components/Calendar/Create';
 import { Complete } from '../../components/Calendar/Complete';
+import { EditPlan } from '../../components/Calendar/EditPlan';
 import { EditResult } from '../../components/Calendar/EditResult';
 import { Header } from '../../components/Header/Header'; 
 import { co } from '@fullcalendar/core/internal-common';
@@ -16,6 +17,7 @@ import { idText } from 'typescript';
 
 
 export interface Field {
+  id: number;
   name: string;
   area: string;
   url: string;
@@ -32,6 +34,7 @@ interface Event {
 export interface Report {
   id: number;
   customer: string;
+  customer_id: number;
   field: Field;
   date: string;
   plans: string[];
@@ -87,6 +90,7 @@ export function Calendar() {
 
         setSelectedReport({
           id: id,
+          customer_id: data.result.customer_id,
           customer: data.result.customer,
           field: data.result.field,
           date: data.result.date,
@@ -139,6 +143,7 @@ export function Calendar() {
       setSelectedReport({
         id: info.event.extendedProps.reportId,
         customer: data.result.customer,
+        customer_id: data.result.customer_id,
         field: data.result.field,
         date: data.result.date,
         plans: data.result.plans,
@@ -202,6 +207,9 @@ export function Calendar() {
           )}
           {detailDisplay === "plan" && selectedReport && (
             <Plan selectedReport={selectedReport}/>
+          )}
+          {detailDisplay === "editPlan" && selectedReport && (
+            <EditPlan selectedReport={selectedReport}/>
           )}
           { detailDisplay === "complete" && selectedReport && (
             <Complete selectedReport={selectedReport}/>
