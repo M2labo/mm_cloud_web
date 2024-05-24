@@ -38,6 +38,13 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
             .catch(error => console.error('Error fetching fields:', error));
     }, []);
 
+    useEffect(() => {
+        // selectedDateが変更されたときにdatesを更新
+        if (selectedDate) {
+            setDates([selectedDate]);
+        }
+    }, [selectedDate]);
+
     const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedCustomer = event.target.value;
         setCustomer(selectedCustomer);

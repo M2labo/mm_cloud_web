@@ -54,12 +54,6 @@ export function Calendar() {
   const [detailDisplay, setDetailDisplay] = useState<string>("create");
   const [selectedReport, setSelectedReport] = useState<Report>();
   
-  //新しい予定を作成したときの処理
-  const onCreated = (detail:string) => { 
-    setDetailDisplay(detail);
-    
-  }
-
   //詳細画面を変更するときの処理
   const onChangeDetail = async(detail:string, id?:number) => {    
     if(selectedReport){

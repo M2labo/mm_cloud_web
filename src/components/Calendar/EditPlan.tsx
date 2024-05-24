@@ -79,6 +79,11 @@ export const EditPlan: React.FC<ReportProps> = ({ selectedReport }) => {
     const handleAddDate = () => {
         setDates([...dates, '']);
     };
+    const handleDeleteDate = (index: number) => {
+        const newDates = [...dates];
+        newDates.splice(index, 1);
+        setDates(newDates);
+    };
 
     const handleDateChange = (index: number, value: string) => {
         const newDates = [...dates];
@@ -157,14 +162,17 @@ export const EditPlan: React.FC<ReportProps> = ({ selectedReport }) => {
                 <p className="mb-4">選択した顧客に対応する圃場がありません。</p>
             )}
             {dates.map((date, index) => (
-                <div key={index} className="mb-4">
-                    <label className="block mb-2">予定日：</label>
-                    <input
-                        type="date"
-                        value={date}
-                        onChange={(e) => handleDateChange(index, e.target.value)}
-                        className="p-2 border rounded w-full"
-                    />
+                <div key={index} className="mb-4 ">
+                    <label className="block mb-2 flex-grow">予定日：</label>
+                    <div className="flex items-center">
+                        <input
+                            type="date"
+                            value={date}
+                            onChange={(e) => handleDateChange(index, e.target.value)}
+                            className="p-2 border rounded flex-grow"
+                        />
+                        <button type="button" onClick={() => handleDeleteDate(index)} className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">☓</button>
+                    </div>
                 </div>
             ))}
             <button type="button" onClick={handleAddDate} className="mb-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">予定日を追加</button>
