@@ -12,7 +12,7 @@ import { Complete } from '../../components/Calendar/Complete';
 import { EditPlan } from '../../components/Calendar/EditPlan';
 import { EditResult } from '../../components/Calendar/EditResult';
 import { Header } from '../../components/Header/Header'; 
-import { co } from '@fullcalendar/core/internal-common';
+import { co, ex } from '@fullcalendar/core/internal-common';
 import { idText } from 'typescript';
 
 
@@ -21,6 +21,12 @@ export interface Field {
   name: string;
   area: string;
   url: string;
+}
+
+export interface Plan {
+  id: number;
+  date: string;
+  comment: string;
 }
 
 interface Event {
@@ -37,7 +43,7 @@ export interface Report {
   customer_id: number;
   field: Field;
   date: string;
-  plans: string[];
+  plans: Plan[];
   report?: string; 
   onChangeDetail: (detail:string, id?:number) => void;
 }

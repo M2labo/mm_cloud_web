@@ -52,7 +52,7 @@ export const Result: React.FC<ReportProps> = ({ selectedReport }) => {
             <p className="mb-2">予定日：</p>
             <ul className="mb-4 list-disc list-inside">
                 {selectedReport.plans.map((plan, index) => (
-                    <li key={index}>{plan}</li>
+                    <li key={index}>{plan.date}：{plan.comment}</li>
                 ))}
             </ul>
             <p className="mb-4">内容：{selectedReport.report}</p>

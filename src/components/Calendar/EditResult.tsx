@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { ReportProps } from "../../Page/Calendar/Calendar";
 
+interface Comment {
+    id: number;
+    comment: string;
+}
+
 export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
     const [selectedDate, setSelectedDate] = useState(selectedReport.date);
-    const [comments, setComments] = useState<string[]>(Array(selectedReport.plans.length).fill(''));
+    const [comments, setComments] = useState<Comment[]>(selectedReport.plans.map(plan => ({ id: plan.id, comment: plan.comment })));
     const [reportContent, setReportContent] = useState(selectedReport.report);
 
     const handleCancelClick = () => {
@@ -45,8 +50,12 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
     };
 
     const handleCommentChange = (index: number, value: string) => {
-        const newComments = [...comments];
-        newComments[index] = value;
+        const newComments = comments.map((comment, idx) => {
+            if (idx === index) {
+                return { ...comment, comment: value };
+            }
+            return comment;
+        });
         setComments(newComments);
     };
 
@@ -66,16 +75,16 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
                             <input
                                 type="radio"
                                 name="selectedDate"
-                                value={plan}
-                                checked={selectedDate === plan}
+                                value={plan.date}
+                                checked={selectedDate === plan.date}
                                 onChange={(e) => setSelectedDate(e.target.value)}
                                 className="mr-2"
                             />
-                            {plan}
+                            {plan.date}
                         </label>
                         <textarea
                             placeholder="延期理由等のコメントを記載"
-                            value={comments[index]}
+                            value={comments[index].comment}
                             onChange={(e) => handleCommentChange(index, e.target.value)}
                             className="mt-2 p-2 border rounded w-full"
                         />

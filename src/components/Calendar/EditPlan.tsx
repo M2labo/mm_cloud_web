@@ -14,7 +14,7 @@ export const EditPlan: React.FC<ReportProps> = ({ selectedReport }) => {
     const [customer, setCustomer] = useState<string>(selectedReport.customer);
     const [fieldOptions, setFieldOptions] = useState<{ id: number, name: string }[]>([]);
     const [selectedField, setSelectedField] = useState(selectedReport.field.name);
-    const [dates, setDates] = useState(selectedReport.plans);
+    const [dates, setDates] = useState<string[]>(selectedReport.plans.map(plan => plan.date));
     const [content, setContent] = useState(selectedReport.report);
     const [customers, setCustomers] = useState<Customer[]>([]);
 
