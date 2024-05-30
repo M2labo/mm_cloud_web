@@ -19,7 +19,7 @@ async function getMavlink(fileKey: string | undefined): Promise<string> {
     }
 }
 
-export const Summary: React.FC<{ fileKey: string, fileName: string, url:string }> = ({ fileKey, fileName, url }) => {
+export const Summary: React.FC<{ fileKey: string, fileName: string, url:string,unit:string }> = ({ fileKey, fileName, url, unit }) => {
     const [dataFrame, setDataFrame] = useState<string[][]>([]);
     
 
@@ -60,12 +60,32 @@ export const Summary: React.FC<{ fileKey: string, fileName: string, url:string }
         );
     }
     return (
-        <a href={url}>
-        <div className="p-4 bg-white shadow-md rounded-lg my-4">
-            <p className="text-lg font-semibold mb-2">{fileName}</p>
-            <p>走行時間：{dataFrame[1][0].substring(0, 5)}秒, 走行距離：{dataFrame[1][1].substring(0, 5)}m, 散布量：{dataFrame[1][2].substring(0, 5)}L, 消費電力：{dataFrame[1][3].substring(0, 5)}Wh</p>
-
-        </div>
-        </a>
+        <>
+        {unit === "km" ? (
+            <a href={url}>
+            <div className="p-4 bg-white shadow-md rounded-lg my-4">
+                <p className="text-lg font-semibold mb-2">{fileName}</p>
+                <p>
+                走行時間：{(parseFloat(dataFrame[1][0])/3600).toFixed(1)}時間, 
+                走行距離：{(parseFloat(dataFrame[1][1])/1000).toFixed(2)}km, 
+                散布量：{dataFrame[1][2].substring(0, 5)}L, 
+                消費電力：{dataFrame[1][3].substring(0, 5)}Wh
+                </p>
+            </div>
+            </a>
+        ) : (
+            <a href={url}>
+            <div className="p-4 bg-white shadow-md rounded-lg my-4">
+                <p className="text-lg font-semibold mb-2">{fileName}</p>
+                <p>
+                走行時間：{dataFrame[1][0].substring(0, 5)}秒, 
+                走行距離：{dataFrame[1][1].substring(0, 5)}m, 
+                散布量：{dataFrame[1][2].substring(0, 5)}L, 
+                消費電力：{dataFrame[1][3].substring(0, 5)}Wh
+                </p>
+            </div>
+            </a>
+        )}
+        </>
     );
 };

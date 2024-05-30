@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { list } from '@aws-amplify/storage'
 import React ,{ useState } from 'react';
-import { Summary } from '../Log/Summary';
+import { Summary } from '../../components/Log/Summary';
 import { Header } from '../../components/Header/Header'; 
 
 
@@ -38,7 +38,7 @@ export function Top() {
                     {mm.map((mmId, index) => (
                         <li key={index} className="mb-2">
                  
-                            <Summary fileKey={`${mmId}/summary.csv`} fileName={mmId.valueOf()} url={`#/mm/${mmId}`}/>
+                            <Summary fileKey={`${mmId}/summary.csv`} fileName={mmId.valueOf()} url={`#/mm/${mmId}`} unit="km"/>
                         </li>
                     ))}
                 </ul>

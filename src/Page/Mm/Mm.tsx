@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { list } from 'aws-amplify/storage';
 import { useParams } from 'react-router-dom';
 import React, { useState } from 'react'
-import { Summary } from '../Log/Summary';
+import { Summary } from '../../components/Log/Summary';
 import { Header } from '../../components/Header/Header';
 
 
@@ -46,7 +46,7 @@ export function Mm() {
         <ul className="list-none">
           {folder.map((folder, index) => (
             <li key={index} className="mb-4">
-              <Summary fileKey={`${mmId}/${folder?.slice(0, 4)}/${folder?.slice(4, 8)}/summary.csv`} fileName={`${folder?.slice(4, 6)}/${folder?.slice(6, 8)}`} url={`#/log/${mmId}/${folder}`} />
+              <Summary fileKey={`${mmId}/${folder?.slice(0, 4)}/${folder?.slice(4, 8)}/summary.csv`} fileName={`${folder?.slice(4, 6)}/${folder?.slice(6, 8)}`} url={`#/log/${mmId}/${folder}`} unit="km" />
             </li>
           ))}
         </ul>

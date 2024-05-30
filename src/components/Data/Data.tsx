@@ -33,13 +33,13 @@ export function Data() {
                     <div key={index} className="border border-gray-200 p-4 m-2 rounded shadow-md w-full md:w-1/2">
                         {graph.type === "time" ? (
                             <>
-                                <h2 className="text-xl font-bold mb-2">{index + 1}. 時系列グラフ</h2>
+                                <h2 className="text-xl font-bold mb-2">{index + 1}. 時系列グラフ（{graph.mmId},日付-{graph.date},時刻-{graph.logId}）</h2>
                                 <Graph mmId={graph.mmId} date={graph.date} logId={graph.logId} />
                                 <button onClick={() => removeGraph(index)} className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">グラフを削除</button>
                             </>
                         ) : graph.type === "correlation" ? (
                             <>
-                                <h2 className="text-xl font-bold mb-2">{index + 1}. 相関グラフ</h2>
+                                <h2 className="text-xl font-bold mb-2">{index + 1}. 相関グラフ（{graph.mmId},日付-{graph.date},時刻-{graph.logId}）</h2>
                                 <Correlation mmId={graph.mmId} date={graph.date} logId={graph.logId} />
                                 <button onClick={() => removeGraph(index)} className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">グラフを削除</button>
                             </>

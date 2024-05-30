@@ -170,6 +170,7 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
         setMin2(min2);
 
     }, [dataFrame, xAxis, yAxis, yAxis2, xAxisName, yAxisName, yAxisName2, xAxisMin, xAxisMax, allData]);
+    
     // ボタンがクリックされたときの動作
     const selectX = (item:string, index:number) => {
         console.log(`${index} button clicked`);
