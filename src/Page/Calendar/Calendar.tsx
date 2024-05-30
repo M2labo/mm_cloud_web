@@ -9,14 +9,24 @@ import { Plan } from '../../components/Calendar/Plan';
 import { Result } from '../../components/Calendar/Result';
 import { Create } from '../../components/Calendar/Create';
 import { Complete } from '../../components/Calendar/Complete';
+import { EditPlan } from '../../components/Calendar/EditPlan';
 import { EditResult } from '../../components/Calendar/EditResult';
 import { Header } from '../../components/Header/Header'; 
+import { co, ex } from '@fullcalendar/core/internal-common';
+import { idText } from 'typescript';
 
 
 export interface Field {
+  id: number;
   name: string;
   area: string;
   url: string;
+}
+
+export interface Plan {
+  id: number;
+  date: string;
+  comment: string;
 }
 
 interface Event {
@@ -30,11 +40,12 @@ interface Event {
 export interface Report {
   id: number;
   customer: string;
+  customer_id: number;
   field: Field;
   date: string;
-  plans: string[];
+  plans: Plan[];
   report?: string; 
-  onChangeDetail: (detail:string) => void;
+  onChangeDetail: (detail:string, id?:number) => void;
 }
 
 export interface ReportProps {
@@ -46,28 +57,63 @@ export function Calendar() {
   const [selectedDate, setSelectedDate] = useState<string>();
   const [prevEvent, setPrevEvent] = useState<any>();
   const [calendar, setCalendar] = useState<Event[]>([]);
-  const [detailDisplay, setDetailDisplay] = useState<string>();
+  const [detailDisplay, setDetailDisplay] = useState<string>("create");
   const [selectedReport, setSelectedReport] = useState<Report>();
   
-  //新しい予定を作成したときの処理
-  const onCreated = (title:string, start:string, groupId:string,content:string) => { 
-    setCalendar(currentEvents => [...currentEvents, { title: title , start: start, groupId: groupId, description: content}]);
-  }
-
   //詳細画面を変更するときの処理
-  const onChangeDetail = (detail:string) => {
-    setDetailDisplay(detail);
+  const onChangeDetail = async(detail:string, id?:number) => {    
+    //情報を変更したときに再取得するための処理
+    if(id){
+      //APIから詳細情報を取得
+      console.log("詳細画面を変更");
+      try {
+        const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
+        const filter = JSON.stringify({ id: id });
+        url.searchParams.append('filter', filter);
+        console.log("filter");
+        console.log(filter);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('Success:', data);
+        console.log(data.result.plans);
+
+        setSelectedReport({
+          id: id,
+          customer_id: data.result.customer_id,
+          customer: data.result.customer,
+          field: data.result.field,
+          date: data.result.date,
+          plans: data.result.plans,
+          report: data.result.report,
+          onChangeDetail: onChangeDetail
+        });
+      } catch (error) {
+          console.error('Error:', error);
+      }   
+    }
+      setDetailDisplay(detail);
   }
   
   //日付をクリックしたときの処理
   const handleDateClick = (arg:any) => {
     setSelectedDate(arg.dateStr);
+    setSelectedReport(undefined);
     setDetailDisplay("create");
   }
 
   //イベントをクリックしたときの処理
   const eventClick= async(info:any) => {
-    // change the border color 
+    // 選択中のイベントの枠を赤くする
     prevEvent?.style.removeProperty('border-color');
     info.el.style.borderColor = 'red';
     setPrevEvent(info.el);
@@ -96,6 +142,7 @@ export function Calendar() {
       setSelectedReport({
         id: info.event.extendedProps.reportId,
         customer: data.result.customer,
+        customer_id: data.result.customer_id,
         field: data.result.field,
         date: data.result.date,
         plans: data.result.plans,
@@ -136,7 +183,7 @@ export function Calendar() {
         <div className="w-3/4 p-4">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]} 
-            height='100vh'
+            height='90vh'
             fixedWeekCount={false}
             initialView="dayGridMonth"
             locales={[jaLocale]}
@@ -144,7 +191,7 @@ export function Calendar() {
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay', 
+              right: 'dayGridMonth,timeGridWeek', 
             }}
             eventContent={renderEventContent}
             events={calendar}
@@ -154,11 +201,14 @@ export function Calendar() {
           />
         </div>
         <div className="w-1/4 p-4 bg-gray-100">
-          { detailDisplay === "create" && selectedDate &&(
-            <Create selectedDate={selectedDate} onCreated={onCreated}/> 
+          { detailDisplay === "create" && (
+            <Create selectedDate={selectedDate} onChangeDetail={onChangeDetail}/> 
           )}
           {detailDisplay === "plan" && selectedReport && (
             <Plan selectedReport={selectedReport}/>
+          )}
+          {detailDisplay === "editPlan" && selectedReport && (
+            <EditPlan selectedReport={selectedReport}/>
           )}
           { detailDisplay === "complete" && selectedReport && (
             <Complete selectedReport={selectedReport}/>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ReportProps } from "../../Page/Calendar/Calendar";
 
 interface Customer {
     id: number;
@@ -9,17 +10,12 @@ interface Customer {
     }[];
 }
 
-interface CreateProps {
-    selectedDate?: string;
-    onChangeDetail: (detail:string,id:number) => void;
-}
-
-export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) => {
-    const [customer, setCustomer] = useState<string>('選択してください');
+export const EditPlan: React.FC<ReportProps> = ({ selectedReport }) => {
+    const [customer, setCustomer] = useState<string>(selectedReport.customer);
     const [fieldOptions, setFieldOptions] = useState<{ id: number, name: string }[]>([]);
-    const [selectedField, setSelectedField] = useState('選択してください');
-    const [dates, setDates] = useState([selectedDate]);
-    const [content, setContent] = useState('');
+    const [selectedField, setSelectedField] = useState(selectedReport.field.name);
+    const [dates, setDates] = useState<string[]>(selectedReport.plans.map(plan => plan.date));
+    const [content, setContent] = useState(selectedReport.report);
     const [customers, setCustomers] = useState<Customer[]>([]);
 
     useEffect(() => {
@@ -39,11 +35,18 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
     }, []);
 
     useEffect(() => {
-        // selectedDateが変更されたときにdatesを更新
-        if (selectedDate) {
-            setDates([selectedDate]);
+        // 顧客が設定された後に初期値を設定
+        const customerObj = customers.find(cust => cust.name === selectedReport.customer);
+        if (customerObj) {
+            setCustomer(customerObj.id.toString());
+            setFieldOptions(customerObj.fields);
+            const fieldObj = customerObj.fields.find(field => field.name === selectedReport.field.name);
+            if (fieldObj) {
+                setSelectedField(fieldObj.name);
+            }
         }
-    }, [selectedDate]);
+    }, [customers, selectedReport.customer, selectedReport.field.name]);
+
 
     const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedCustomer = event.target.value;
@@ -52,8 +55,15 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
         const customerObj = customers.find(cust => cust.id.toString() === selectedCustomer);
         if (customerObj) {
             setFieldOptions(customerObj.fields);
+            // 顧客が変更されたときに、最初の圃場を自動的に選択
+            if (customerObj.fields.length > 0) {
+                setSelectedField(customerObj.fields[0].name);
+            } else {
+                setSelectedField('');
+            }
         } else {
             setFieldOptions([]);
+            setSelectedField('');
         }
     };
 
@@ -95,10 +105,11 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
             }
 
             const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
-            console.log('Selected customer:', selectedCustomer.id);
+            const filter = JSON.stringify({ id: selectedReport.id });
+            url.searchParams.append('filter', filter);
 
             const response = await fetch(url, {
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -120,18 +131,22 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
             const data = await response.json();
             console.log('Success:', data);
             console.log('Plan created:', data.result['id']);
-            onChangeDetail("plan", data.result['id']);
+            selectedReport.onChangeDetail("plan", selectedReport.id);
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
+    const handleCancelClick = () => {
+        selectedReport.onChangeDetail("plan", selectedReport.id);
+    }
+
     return (
         <div className="p-4 bg-white shadow-md rounded-lg overflow-wrap-break-word">
-            <h1 className="text-2xl font-bold mb-4">作業予定-作成</h1>
+            <h1 className="text-2xl font-bold mb-4">作業予定-編集</h1>
             <label htmlFor="customer" className="block mb-2">顧客：</label>
             <select id="customer" value={customer} onChange={handleCustomerChange} className="mb-4 p-2 border rounded w-full">
-                <option value="選択してください">選択してください</option>
+              
                 {Array.isArray(customers) && customers.map(cust => (
                     <option key={cust.id} value={cust.id.toString()}>{cust.name}</option>
                 ))}
@@ -139,7 +154,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
             <label htmlFor="field" className="block mb-2">圃場：</label>
             {fieldOptions.length > 0 ? (
                 <select id="field" value={selectedField} onChange={handleFieldChange} className="mb-4 p-2 border rounded w-full">
-                    <option value="選択してください">選択してください</option>
+                    
                     {fieldOptions.map(field => (
                         <option key={field.id} value={field.name}>{field.name}</option>
                     ))}
@@ -148,7 +163,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
                 <p className="mb-4">選択した顧客に対応する圃場がありません。</p>
             )}
             <label className="block mb-2 flex-grow">予定日：</label>
-            {dates.map((date, index) => (     
+            {dates.map((date, index) => (
                 <div key={index} className="mb-4 ">
                     
                     <div className="flex items-center">
@@ -166,8 +181,8 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
             <label htmlFor="content" className="block mb-2">内容：</label>
             <textarea id="content" value={content} onChange={handleContentChange} className="mb-4 p-2 border rounded w-full"></textarea>
             <div className="flex space-x-4">
-                <button type="button" onClick={handleCreateClick} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">作成</button>
-                <button type="button" className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">キャンセル</button>
+                <button type="button" onClick={handleCreateClick} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">更新</button>
+                <button type="button" onClick={handleCancelClick} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700">キャンセル</button>
             </div>
         </div>
     );
