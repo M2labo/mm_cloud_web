@@ -179,8 +179,8 @@ export function Calendar() {
   return (
     <>
       <Header />
-      <div className="flex">
-        <div className="w-3/4 p-4">
+      <div className="md:flex flex-column md:flex-row">
+        <div className="md:w-3/4 p-4">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]} 
             height='90vh'
@@ -189,9 +189,9 @@ export function Calendar() {
             locales={[jaLocale]}
             locale='ja'
             headerToolbar={{
-              left: 'prev,next today',
+              left: 'prev,next',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek', 
+              right: 'today', 
             }}
             eventContent={renderEventContent}
             events={calendar}
@@ -200,7 +200,7 @@ export function Calendar() {
             eventClick={eventClick}
           />
         </div>
-        <div className="w-1/4 p-4 bg-gray-100">
+        <div className="md:w-1/4 p-4 bg-gray-100">
           { detailDisplay === "create" && (
             <Create selectedDate={selectedDate} onChangeDetail={onChangeDetail}/> 
           )}

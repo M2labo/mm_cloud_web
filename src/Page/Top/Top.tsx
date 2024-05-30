@@ -33,7 +33,7 @@ export function Top() {
         <>
             <Header />
             <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">MobileMover</h1>
+                <h1 className="text-2xl font-bold mb-4 text-center md:text-left">MobileMover</h1>
                 <ul className="list-none">
                     {mm.map((mmId, index) => (
                         <li key={index} className="mb-2">
