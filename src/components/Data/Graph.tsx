@@ -102,6 +102,8 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
         console.log("newX");
         console.log(newX);
         setXData(newX);
+        setXAxisMin(newX[0]);       //X軸の最小値をセット
+        setXAxisMax(newX[newX.length - 1]);     //X軸の最大値をセット
         setXData2(newX2);
         setYData(newY);
         setYData2(newY2); 
