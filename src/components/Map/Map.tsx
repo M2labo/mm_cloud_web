@@ -1,32 +1,43 @@
-import { getUrl } from "@aws-amplify/storage"
-import { MapContainer, TileLayer, Polyline,useMap, Polygon,Popup } from "react-leaflet";
 import React, { useEffect, useState } from 'react';
-import { LatLngTuple } from "leaflet"; // Import the type
+import { MapContainer, TileLayer, Polyline, useMap, Polygon, Popup } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
+import { getUrl } from "@aws-amplify/storage";
+import { LatLngTuple } from "leaflet";
 import { Images } from '../../components/Images/Images';
 
+// mmId、date、logIdを使用してROUTE.csvファイルのURLを取得し、その内容をテキストとして返す関数
 async function getMavlink(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<string> {
-    const urlResponse = await getUrl({ key: `${mmId}/${date?.slice(0,4)}/${date?.slice(4,8)}/${logId}/ROUTE.csv` });
+    const urlResponse = await getUrl({ key: `${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${logId}/ROUTE.csv` });
     const response = await fetch(urlResponse.url.href);
-    return response.text(); // Return the response text
+    return response.text();
 }
 
+// APIエンドポイントからポリゴンデータを取得する関数
+async function fetchPolygons(): Promise<any> {
+    const response = await fetch('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/all_field');
+    const data = await response.json();
+    return data;
+}
+
+// マップの中心を変更するコンポーネント
 interface ChangeMapCenterProps {
     position: LatLngTuple;
-  }
-  
-  function ChangeMapCenter({ position }: ChangeMapCenterProps) {
+}
+
+function ChangeMapCenter({ position }: ChangeMapCenterProps) {
     const map = useMap();
     map.panTo(position);
-  
     return null;
-  }
+}
 
+// Mapコンポーネント
 export const Map: React.FC<{ mmId: string | undefined; date: string | undefined; logId: string | undefined }> = ({ mmId, date, logId }) => {
     const [dataFrame, setDataFrame] = useState<string[][]>([]);
     const [multiPolyline, setMultiPolyline] = useState<LatLngTuple[][]>([[]]);
-    const [position, setPosition] = useState<LatLngTuple>([0, 0]); // 初期値を適当な値で設定
+    const [position, setPosition] = useState<LatLngTuple>([0, 0]);
+    const [polygons, setPolygons] = useState<{ id: number; name: string; customer: string; customer_id: number; polygon: LatLngTuple[] }[]>([]);
 
+    // mmId、date、logIdが変更されたときにROUTE.csvファイルを取得し、dataFrameにセットする
     useEffect(() => {
         let isSubscribed = true;
         getMavlink(mmId, date, logId)
@@ -37,7 +48,6 @@ export const Map: React.FC<{ mmId: string | undefined; date: string | undefined;
                         const cells = line.split(',');
                         dataRows.push(cells);
                     });
-
                     setDataFrame(dataRows);
                 }
             })
@@ -46,6 +56,7 @@ export const Map: React.FC<{ mmId: string | undefined; date: string | undefined;
         return () => { isSubscribed = false; };
     }, [mmId, date, logId]);
 
+    // dataFrameが変更されたときに、multiPolylineとpositionを更新する
     useEffect(() => {
         const newMultiPolyline: LatLngTuple[][] = [[]];
         let newPosition: LatLngTuple = [0, 0];
@@ -56,95 +67,56 @@ export const Map: React.FC<{ mmId: string | undefined; date: string | undefined;
 
             if (!isNaN(lat) && !isNaN(lng)) {
                 newMultiPolyline[0].push([lat, lng]);
-                newPosition = [lat, lng]; // 最後の有効な位置を更新
-                // console.log(newPosition);
+                newPosition = [lat, lng];
             }
         });
-        console.log(newMultiPolyline);
+
         setMultiPolyline(newMultiPolyline);
-        setPosition(newPosition); // 更新された位置をセット
-    }, [dataFrame]); // dataFrameが更新されたら実行
+        setPosition(newPosition);
+    }, [dataFrame]);
 
-    const fieldMultiPolyline: LatLngTuple[] = [
-        [36.252588, 137.866538],
-        [36.252571, 137.867133],
-        [36.251148, 137.866879],
-        [36.251151, 137.866790],
-        [36.251636, 137.866864],
-        [36.251686, 137.866425],
-        [36.252588, 137.866538],
+    // コンポーネントがマウントされたときにポリゴンデータを取得し、polygonsにセットする
+    useEffect(() => {
+        let isSubscribed = true;
+        fetchPolygons()
+            .then(data => {
+                if (isSubscribed) {
+                    const polygonsData = data.result.fields.map((field: any) => ({
+                        id: field.id,
+                        name: field.name,
+                        customer: field.customer,
+                        customer_id: field.customer_id,
+                        polygon: JSON.parse(field.polygon).map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[]
+                    }));
+                    setPolygons(polygonsData);
+                }
+            })
+            .catch(console.error);
 
-    ];
-
-    const kurumikitaMultiPolyline: LatLngTuple[] = [
-        [36.252678, 137.866275],
-        [36.253274, 137.866389],
-        [36.253289, 137.866021],
-        [36.252692, 137.865930],
-        [36.252678, 137.866275]
-    ];
-
-    const furuyaMultiPolyline: LatLngTuple[] = [
-        [36.252393, 137.861287],
-        [36.252470, 137.860546],
-        [36.251891, 137.860477],
-        [36.251806, 137.861174]
-    ];
-
-    const chokoenmaeMultiPolyline: LatLngTuple[] = [
-        [36.251413, 137.859801],
-        [36.251884, 137.859878],
-        [36.251929, 137.859515],
-        [36.251517, 137.858947],
-        [36.251413, 137.859801]
-    ];
-    const chokoenminamiMultiPolyline: LatLngTuple[] = [
-        [36.251375, 137.859478],
-        [36.250442, 137.859309],
-        [36.250476, 137.859036],
-        [36.251407, 137.859207],
-        [36.251375, 137.859478]
-    ];
-    
+        return () => { isSubscribed = false; };
+    }, []);
 
     return (
         <div>
-            
             <MapContainer center={position} zoom={18} maxZoom={25} style={{ height: "50vh" }}>
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+                {/* CSVファイルから取得した経路データを表示 */}
                 <Polyline pathOptions={{ color: 'lime' }} positions={multiPolyline} />
-                <Polygon pathOptions={{ color: 'red' }} positions={fieldMultiPolyline} >
-                    <Popup>
-                        鶴峰農園　車屋
-                    </Popup>
-                </Polygon>
-                <Polygon pathOptions={{ color: 'red' }} positions={kurumikitaMultiPolyline} >
-                    <Popup>
-                        中村弘道　クルミ北
-                    </Popup>
-                </Polygon>
-                <Polygon pathOptions={{ color: 'red' }} positions={furuyaMultiPolyline} >
-                    <Popup>
-                        ナカムラフルーツ　車屋
-                    </Popup>
-                </Polygon>
-                <Polygon pathOptions={{ color: 'red' }} positions={chokoenmaeMultiPolyline} >
-                    <Popup>
-                    鶴峰農園　長幸園前
-                    </Popup>
-                </Polygon>
-                <Polygon pathOptions={{ color: 'red' }} positions={chokoenminamiMultiPolyline} >
-                    <Popup>
-                    鶴峰農園　長幸園南
-                    </Popup>
-                </Polygon>
+                {/* APIから取得したポリゴンデータを表示 */}
+                {polygons.map(polygon => (
+                    <Polygon key={polygon.id} pathOptions={{ color: 'red' }} positions={polygon.polygon}>
+                        <Popup>
+                            {polygon.customer} {polygon.name}
+                        </Popup>
+                    </Polygon>
+                ))}
+                {/* マップの中心を変更 */}
                 <ChangeMapCenter position={position} />
             </MapContainer>
-            <Images  /> 
+            <Images />
         </div>
-        
     );
 };
