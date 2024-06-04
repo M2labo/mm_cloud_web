@@ -8,6 +8,7 @@ export const Header = () => {
       </div>
       <nav className="nav">
         <ul className="flex space-x-4">
+          <li><a href="#map" className="hover:bg-gray-700 p-2 rounded">MAP</a></li>
           <li><a href="#calendar" className="hover:bg-gray-700 p-2 rounded">CALENDAR</a></li>
           <li><a href="#" className="hover:bg-gray-700 p-2 rounded">LOG</a></li>
 

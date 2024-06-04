@@ -3,6 +3,7 @@ import { Data } from '../../components/Data/Data';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Header } from '../../components/Header/Header';
+import { Images } from '../../components/Images/Images';
 
 
 export function Detail() {
@@ -15,7 +16,13 @@ export function Detail() {
         <div className="relative">
             <Header />
             <div className="h-full">
-                {under === 'map' ? <Map mmId={mmId} date={date} logId={logId}/> : null}
+                {under === 'map' ? (
+                    <>
+                    <Map mmId={mmId} date={date} logId={logId}/> 
+                    <Images/>
+                    </>
+                )
+                : null}
                 {under === 'data' ? <Data /> : null}
             </div>
             <button

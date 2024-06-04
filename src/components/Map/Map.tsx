@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Polyline, useMap, Polygon, Popup } from "react
 import 'leaflet/dist/leaflet.css';
 import { getUrl } from "@aws-amplify/storage";
 import { LatLngTuple } from "leaflet";
-import { Images } from '../../components/Images/Images';
+
 
 // mmId、date、logIdを使用してROUTE.csvファイルのURLを取得し、その内容をテキストとして返す関数
 async function getMavlink(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<string> {
@@ -31,15 +31,16 @@ function ChangeMapCenter({ position }: ChangeMapCenterProps) {
 }
 
 // Mapコンポーネント
-export const Map: React.FC<{ mmId: string | undefined; date: string | undefined; logId: string | undefined }> = ({ mmId, date, logId }) => {
+export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefined; logId?: string | undefined; size?:string; zoom?:number}> = ({ mmId, date, logId, size, zoom }) => {
     const [dataFrame, setDataFrame] = useState<string[][]>([]);
     const [multiPolyline, setMultiPolyline] = useState<LatLngTuple[][]>([[]]);
-    const [position, setPosition] = useState<LatLngTuple>([0, 0]);
+    const [position, setPosition] = useState<LatLngTuple>([36.252261, 137.866767]);
     const [polygons, setPolygons] = useState<{ id: number; name: string; customer: string; customer_id: number; polygon: LatLngTuple[] }[]>([]);
 
     // mmId、date、logIdが変更されたときにROUTE.csvファイルを取得し、dataFrameにセットする
     useEffect(() => {
         let isSubscribed = true;
+        if (!mmId || !date || !logId) return;
         getMavlink(mmId, date, logId)
             .then(data => {
                 if (isSubscribed) {
@@ -58,6 +59,7 @@ export const Map: React.FC<{ mmId: string | undefined; date: string | undefined;
 
     // dataFrameが変更されたときに、multiPolylineとpositionを更新する
     useEffect(() => {
+        if (!mmId || !date || !logId) return;
         const newMultiPolyline: LatLngTuple[][] = [[]];
         let newPosition: LatLngTuple = [0, 0];
 
@@ -98,7 +100,7 @@ export const Map: React.FC<{ mmId: string | undefined; date: string | undefined;
 
     return (
         <div>
-            <MapContainer center={position} zoom={18} maxZoom={25} style={{ height: "50vh" }}>
+            <MapContainer center={position} zoom={zoom?zoom:18} maxZoom={25} style={{ height: size?size:"50vh" }}>
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -116,7 +118,6 @@ export const Map: React.FC<{ mmId: string | undefined; date: string | undefined;
                 {/* マップの中心を変更 */}
                 <ChangeMapCenter position={position} />
             </MapContainer>
-            <Images />
         </div>
     );
 };
