@@ -7,7 +7,9 @@ export const Result: React.FC<ReportProps> = ({ selectedReport }) => {
         selectedReport.onChangeDetail("editResult", selectedReport.id);
     }
     const handleUndoCompletion = async () => {
-        
+        const confirmDelete = window.confirm('本当にこの結果を予定に戻しますか？');
+        if (!confirmDelete) return;
+
         try {
             const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
             const filter = JSON.stringify({ id: selectedReport.id });
