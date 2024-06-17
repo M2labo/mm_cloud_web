@@ -11,13 +11,13 @@ async function getMavlink(mmId: string | undefined, date: string | undefined, lo
     return response.text(); // Return the response text
 }
 
-export const Graph: React.FC<{ mmId: string | undefined; date: string | undefined; logId: string | undefined;}> = ({ mmId, date, logId }) => {
-    const [type, setType] = useState<string>("MAVLINK");
+export const Graph: React.FC<{ mmId: string | undefined; date: string | undefined; logId: string | undefined; defaultType?: string; defaultXAxis?:number; defaultYAxis?:number}> = ({ mmId, date, logId, defaultType,defaultXAxis, defaultYAxis }) => {
+    const [type, setType] = useState<string>(defaultType? defaultType : "MAVLINK");
     const [dataFrame, setDataFrame] = useState<string[][]>([]);
-    const [xAxis, setXAxis] = useState<number>(0);
+    const [xAxis, setXAxis] = useState<number>(defaultXAxis? defaultXAxis : 0);
     const [xAxisName, setXAxisName] = useState<string>("");
-    const [xAxis2, setXAxis2] = useState<number>(0);
-    const [yAxis, setYAxis] = useState<number>(0);
+    const [xAxis2, setXAxis2] = useState<number>(defaultXAxis? defaultXAxis : 0);
+    const [yAxis, setYAxis] = useState<number>(defaultYAxis? defaultYAxis : 0);
     const [yAxisName, setYAxisName] = useState<string>("");
     const [yAxis2, setYAxis2] = useState<number>(0);
     const [yAxisName2, setYAxisName2] = useState<string>("");
