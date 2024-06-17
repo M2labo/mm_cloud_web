@@ -17,6 +17,7 @@ export function Analysis() {
     const [mmList, setMmList] = useState<string[]>([]);
     const [dateList, setDateList] = useState<string[]>([]);
     const [logIdList, setLogIdList] = useState<string[]>([]);
+    const [selectedLogIds, setSelectedLogIds] = useState<string[]>([]);
 
     useEffect(() => {
         list({
@@ -47,9 +48,9 @@ export function Analysis() {
             data.items.forEach((file) => {
                 const folderName = file.key.split('/').slice(1, 3).join('');
                 if (folderName !== 'summary.csv' && folderName !== file.key.split('/').slice(1, 2).join('') + 'summary.csv') {
-                  folder.add(folderName);
+                    folder.add(folderName);
                 }
-              });
+            });
             setDateList(Array.from(folder));
         }).catch((error) => {
             console.log(error);
@@ -58,7 +59,7 @@ export function Analysis() {
 
     useEffect(() => {
         list({
-            prefix: newGraph.mmId + '/' + newGraph.date?.slice(0,4) + '/' + newGraph.date?.slice(4,8),
+            prefix: newGraph.mmId + '/' + newGraph.date?.slice(0, 4) + '/' + newGraph.date?.slice(4, 8),
             options: {
                 listAll: true
             }
@@ -66,7 +67,7 @@ export function Analysis() {
             const folder: Set<string> = new Set();
             data.items.forEach((file) => {
                 const folderName = file.key.split('/').slice(3, 4).join('');
-                if (folderName !== 'summary.csv') { 
+                if (folderName !== 'summary.csv') {
                     folder.add(folderName);
                 }
             });
@@ -78,12 +79,32 @@ export function Analysis() {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setNewGraph({ ...newGraph, [name]: value });
+        if (name === "logIds") {
+            const newLogIds = [...selectedLogIds];
+            if ((e.target as HTMLInputElement).checked) {
+                newLogIds.push(value);
+            } else {
+                const index = newLogIds.indexOf(value);
+                if (index > -1) {
+                    newLogIds.splice(index, 1);
+                }
+            }
+            setSelectedLogIds(newLogIds);
+        } else {
+            setNewGraph({ ...newGraph, [name]: value });
+        }
     };
 
     const addGraph = () => {
-        setGraphs([...graphs, newGraph]);
-        setNewGraph({ mmId: '', date: '', logId: '', type: 'time' }); // Reset form
+        const newGraphs = selectedLogIds.map(logId => ({
+            mmId: newGraph.mmId,
+            date: newGraph.date,
+            logId: logId,
+            type: newGraph.type
+        }));
+        setGraphs([...graphs, ...newGraphs]);
+        setNewGraph({ mmId: '', date: '', logId: '', type: 'time' });
+        setSelectedLogIds([]);
     };
 
     const removeGraph = (index: number) => {
@@ -117,18 +138,23 @@ export function Analysis() {
                             <option key={index} value={date}>{date}</option>
                         ))}
                     </select>
-                    <select
-                        name="logId"
-                        value={newGraph.logId}
-                        onChange={handleInputChange}
-                        className="mr-2 px-4 py-2 border rounded"
-                    >
-                        <option value="">時刻を選択</option>
+                    <div className="mb-2">
                         {logIdList.map((logId, index) => (
-                            <option key={index} value={logId}>{logId}</option>
+                            <div key={index}>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="logIds"
+                                        value={logId}
+                                        checked={selectedLogIds.includes(logId)}
+                                        onChange={handleInputChange}
+                                        className="mr-2"
+                                    />
+                                    {logId}
+                                </label>
+                            </div>
                         ))}
-                    </select>
-
+                    </div>
                     <select
                         name="type"
                         value={newGraph.type}
