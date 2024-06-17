@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Graph } from './Graph';
 import { Correlation } from './Correlation';
 import { Table } from './Table';
-import { useParams } from 'react-router-dom';
-import { Mavlink } from '../Mavlink/Mavlink';
+
 
 export function Data() {
-    const { mmId, date, logId } = useParams();
+    const [mmId, setMmId] = useState("");
+    const [date, setDate] = useState("");
+    const [logId, setLogId] = useState("");
     const type = "time";
     const [graphs, setGraphs] = useState([{ mmId, date, logId, type}]);
 

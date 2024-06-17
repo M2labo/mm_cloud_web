@@ -55,7 +55,7 @@ export const Summary: React.FC<{ fileKey: string, fileName: string, url:string,u
         return (
             <div className="p-4 bg-white shadow-md rounded-lg my-4">
                 <p className="text-lg font-semibold mb-2"><a href={url}>{fileName}</a></p>
-                <p>No data available.</p>
+                <p className="text-red-400">※ログのアップロードに失敗しました</p>
             </div>
         );
     }

@@ -11,6 +11,7 @@ export const Header = () => {
           <li><a href="#map" className="hover:bg-gray-700 p-2 rounded">MAP</a></li>
           <li><a href="#calendar" className="hover:bg-gray-700 p-2 rounded">CALENDAR</a></li>
           <li><a href="#" className="hover:bg-gray-700 p-2 rounded">LOG</a></li>
+          <li><a href="#analysis" className="hover:bg-gray-700 p-2 rounded">ANALYSIS</a></li>
 
         </ul>
       </nav>
