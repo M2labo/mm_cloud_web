@@ -64,6 +64,15 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
         return () => { isSubscribed = false; }; // Cleanup function to prevent setting state on unmounted component
     }, [mmId, date, logId, type]); // Dependency array to re-run effect when these props change
 
+    // 初期化時にX軸とY軸の名前を設定
+    useEffect(() => {
+        if (dataFrame.length > 0) {
+            setXAxisName(dataFrame[0][xAxis]);
+            setYAxisName(dataFrame[0][yAxis]);
+
+        }
+    }, [dataFrame, xAxis, yAxis]);
+
 
     //ボタン用のデータをセット
     useEffect(() => {
@@ -203,7 +212,7 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
 
     return (
         <div className="p-4">
-            <select onChange={(e) => setType(e.target.value)} className="mb-4 p-2 border rounded">
+            <select value={type} onChange={(e) => setType(e.target.value)} className="mb-4 p-2 border rounded">
                 <option value="MAVLINK">MAVLINK</option>
                 <option value="CAN">CAN</option>
                 <option value="SYSTEM">SYSTEM</option>

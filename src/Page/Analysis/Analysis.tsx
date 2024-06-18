@@ -9,6 +9,9 @@ import { FaRegCheckSquare } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
 import { FaChevronDown } from "react-icons/fa";
+import { FaRegFile } from "react-icons/fa";
+import { FaRegFolder } from "react-icons/fa";
+import { FaRegFolderOpen } from "react-icons/fa";
 
 interface GraphData {
     mmId: string;
@@ -201,7 +204,7 @@ export function Analysis() {
                         className="mr-2 px-4 py-2 border rounded"
                     >
                         {getOptions().map((option, index) => (
-                            <option key={index} value={index}>{option}</option>
+                            <option key={index} value={index+1}>{option}</option>
                         ))}
                     </select>
                     <select
@@ -230,9 +233,9 @@ export function Analysis() {
                         expandOpen: <FaChevronDown />,
                         expandAll: <FaChevronRight />,
                         collapseAll: <FaChevronDown />,
-                        parentClose: <FaChevronRight />,
-                        parentOpen: <FaChevronDown />,
-                        leaf: <FaRegSquare />
+                        parentClose: <FaRegFolder />,
+                        parentOpen: <FaRegFolderOpen />,
+                        leaf: <FaRegFile />
                     }}
                 />
                 <div className="flex overflow-x-auto mt-4">
