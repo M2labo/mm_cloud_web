@@ -21,6 +21,7 @@ interface GraphData {
     defaultType: string;
     defaultXAxis: number;
     defaultYAxis: number;
+    defaultYAxis2?: number;
 }
 
 const MAVLINK_OPTIONS = ['count', 'Time', 'groundspeed', 'servo1_raw', 'servo3_raw', 'servo15_raw', 
@@ -35,7 +36,7 @@ const SYSTEM_OPTIONS = ['count', 'Time', 'Temp', 'CPU%', 'Network', 'SSID'];
 
 export function Analysis() {
     const [graphs, setGraphs] = useState<GraphData[]>([]);
-    const [newGraph, setNewGraph] = useState<GraphData>({ mmId: '', date: '', logId: '', type: 'time', defaultType: 'MAVLINK', defaultXAxis: 0, defaultYAxis: 0 });
+    const [newGraph, setNewGraph] = useState<GraphData>({ mmId: '', date: '', logId: '', type: 'time', defaultType: 'MAVLINK', defaultXAxis: 0, defaultYAxis: 0});
     const [mmList, setMmList] = useState<string[]>([]);
     const [dateList, setDateList] = useState<{ [key: string]: string[] }>({});
     const [logIdList, setLogIdList] = useState<{ [key: string]: { [key: string]: string[] } }>({});
@@ -135,16 +136,20 @@ export function Analysis() {
                 type: newGraph.type,
                 defaultType: newGraph.defaultType,
                 defaultXAxis: newGraph.defaultXAxis,
-                defaultYAxis: newGraph.defaultYAxis
+                defaultYAxis: newGraph.defaultYAxis,
+                defaultYAxis2: newGraph.defaultYAxis2? newGraph.defaultYAxis2 : 0
             };
         });
         setGraphs([...graphs, ...newGraphs]);
-        setNewGraph({ mmId: '', date: '', logId: '', type: 'time', defaultType: 'MAVLINK', defaultXAxis: 0, defaultYAxis: 0 });
         setChecked([]);
     };
 
     const removeGraph = (index: number) => {
         setGraphs(graphs.filter((_, i) => i !== index));
+    };
+
+    const removeAllGraphs = () => {
+        setGraphs([]);
     };
 
     const treeData = mmList.map(mmId => ({
@@ -203,6 +208,7 @@ export function Analysis() {
                         onChange={handleInputChange}
                         className="mr-2 px-4 py-2 border rounded"
                     >
+                        <option value="0">X軸を選択</option>
                         {getOptions().map((option, index) => (
                             <option key={index} value={index+1}>{option}</option>
                         ))}
@@ -212,12 +218,34 @@ export function Analysis() {
                         value={newGraph.defaultYAxis}
                         onChange={handleInputChange}
                         className="mr-2 px-4 py-2 border rounded"
-                    >
+                    >   
+                        {newGraph.type === 'time' ? (
+                            <option value="0">Y軸①を選択</option>
+                        ) : 
+                            <option value="0">Y軸を選択</option>
+                            }   
+                        
                         {getOptions().map((option, index) => (
                             <option key={index} value={index+1}>{option}</option>
                         ))}
                     </select>
+                    {newGraph.type === 'time' ? (
+                        <select
+                            name="defaultYAxis2"
+                            value={newGraph.defaultYAxis2}
+                            onChange={handleInputChange}
+                            className="mr-2 px-4 py-2 border rounded"
+                        >
+                            <option value="0">Y軸②を選択</option>
+                            {getOptions().map((option, index) => (
+                                <option key={index} value={index+1}>{option}</option>
+                            ))}
+                        </select>
+                        ) : null
+                    }
+                    
                     <button onClick={addGraph} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">グラフを追加</button>
+                    <button onClick={removeAllGraphs} className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">全グラフを削除</button>
                 </div>
                 <CheckboxTree
                     nodes={treeData}
@@ -244,13 +272,13 @@ export function Analysis() {
                             {graph.type === "time" ? (
                                 <>
                                     <h2 className="text-xl font-bold mb-2">{index + 1}. 時系列グラフ（{graph.mmId}, 日付-{graph.date}, 時刻-{graph.logId}）</h2>
-                                    <Graph mmId={graph.mmId} date={graph.date} logId={graph.logId} defaultType={graph.defaultType} defaultXAxis={graph.defaultXAxis} defaultYAxis={graph.defaultYAxis} />
+                                    <Graph mmId={graph.mmId} date={graph.date} logId={graph.logId} defaultType={graph.defaultType} defaultXAxis={graph.defaultXAxis} defaultYAxis={graph.defaultYAxis} defaultYAxis2={graph.defaultYAxis2}/>
                                     <button onClick={() => removeGraph(index)} className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">グラフを削除</button>
                                 </>
                             ) : graph.type === "correlation" ? (
                                 <>
                                     <h2 className="text-xl font-bold mb-2">{index + 1}. 相関グラフ（{graph.mmId}, 日付-{graph.date}, 時刻-{graph.logId}）</h2>
-                                    <Correlation mmId={graph.mmId} date={graph.date} logId={graph.logId} />
+                                    <Correlation mmId={graph.mmId} date={graph.date} logId={graph.logId} defaultType={graph.defaultType} defaultXAxis={graph.defaultXAxis} defaultYAxis={graph.defaultYAxis}/>
                                     <button onClick={() => removeGraph(index)} className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">グラフを削除</button>
                                 </>
                             ) : null}

@@ -42,12 +42,12 @@ function calculateRegression(x:number[], y:number[]) {
     return { slope, intercept };
 }
 
-export const Correlation: React.FC<{ mmId: string | undefined; date: string | undefined; logId: string | undefined;}> = ({ mmId, date, logId }) => {
-    const [type, setType] = useState<string>("MAVLINK");
+export const Correlation: React.FC<{ mmId: string | undefined; date: string | undefined; logId: string | undefined; defaultType?:string; defaultXAxis?:number; defaultYAxis?:number;}> = ({ mmId, date, logId, defaultType, defaultXAxis, defaultYAxis }) => {
+    const [type, setType] = useState<string>(defaultType? defaultType : "MAVLINK");
     const [dataFrame, setDataFrame] = useState<string[][]>([]);
-    const [xAxis, setXAxis] = useState<number>(0);
+    const [xAxis, setXAxis] = useState<number>(defaultXAxis? defaultXAxis : 0);
     const [xAxisName, setXAxisName] = useState<string>("");
-    const [yAxis, setYAxis] = useState<number>(0);
+    const [yAxis, setYAxis] = useState<number>(defaultYAxis? defaultYAxis : 0);
     const [yAxisName, setYAxisName] = useState<string>("");
     const [items, setItems] = useState<string[]>([]);
     const [xData, setXData] = useState<number[]>([]);
@@ -82,6 +82,14 @@ export const Correlation: React.FC<{ mmId: string | undefined; date: string | un
 
         return () => { isSubscribed = false; }; // Cleanup function to prevent setting state on unmounted component
     }, [mmId, date, logId, type]); // Dependency array to re-run effect when these props change
+
+    // 初期化時にX軸とY軸の名前を設定
+    useEffect(() => {
+        if (dataFrame.length > 0) {
+            setXAxisName(dataFrame[0][xAxis]);
+            setYAxisName(dataFrame[0][yAxis]);
+        }
+    }, [dataFrame, xAxis, yAxis]);
 
 
     //ボタン用のデータをセット
@@ -185,7 +193,7 @@ export const Correlation: React.FC<{ mmId: string | undefined; date: string | un
 
     return (
         <div className="p-4">
-            <select onChange={(e) => setType(e.target.value)} className="block mb-4 p-2 border rounded">
+            <select value={type} onChange={(e) => setType(e.target.value)} className="block mb-4 p-2 border rounded">
                 <option value="MAVLINK">MAVLINK</option>
                 <option value="CAN">CAN</option>
                 <option value="SYSTEM">SYSTEM</option>
