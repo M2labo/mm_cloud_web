@@ -247,26 +247,29 @@ export function Analysis() {
                     <button onClick={addGraph} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">グラフを追加</button>
                     <button onClick={removeAllGraphs} className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">全グラフを削除</button>
                 </div>
-                <CheckboxTree
-                    nodes={treeData}
-                    checked={checked}
-                    expanded={expanded}
-                    onCheck={handleCheck}
-                    onExpand={setExpanded}
-                    icons={{
-                        check: <FaRegCheckSquare />,
-                        uncheck: <FaRegSquare />,
-                        halfCheck: <FaRegCheckSquare />,
-                        expandClose: <FaChevronRight />,
-                        expandOpen: <FaChevronDown />,
-                        expandAll: <FaChevronRight />,
-                        collapseAll: <FaChevronDown />,
-                        parentClose: <FaRegFolder />,
-                        parentOpen: <FaRegFolderOpen />,
-                        leaf: <FaRegFile />
-                    }}
-                />
+                
                 <div className="flex overflow-x-auto mt-4">
+                    <div className='min-w-52 border border-gray-200 p-2 m-2 rounded shadow-md'>
+                        <CheckboxTree
+                            nodes={treeData}
+                            checked={checked}
+                            expanded={expanded}
+                            onCheck={handleCheck}
+                            onExpand={setExpanded}
+                            icons={{
+                                check: <FaRegCheckSquare />,
+                                uncheck: <FaRegSquare />,
+                                halfCheck: <FaRegCheckSquare />,
+                                expandClose: <FaChevronRight />,
+                                expandOpen: <FaChevronDown />,
+                                expandAll: <FaChevronRight />,
+                                collapseAll: <FaChevronDown />,
+                                parentClose: <FaRegFolder />,
+                                parentOpen: <FaRegFolderOpen />,
+                                leaf: <FaRegFile />
+                            }}
+                        />
+                    </div>
                     {graphs.map((graph, index) => (
                         <div key={index} className="border border-gray-200 p-4 m-2 rounded shadow-md w-full md:w-1/2">
                             {graph.type === "time" ? (
