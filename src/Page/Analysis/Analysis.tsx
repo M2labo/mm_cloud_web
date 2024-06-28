@@ -29,8 +29,9 @@ const MAVLINK_OPTIONS = ['count', 'Time', 'groundspeed', 'servo1_raw', 'servo3_r
                         'altitude', 'lat', 'lng', 'pitch', 'roll', 'yaw', 'base_mode', 'seq',
                         'vibration_x', 'vibration_y', 'vibration_z'];
 
-const CAN_OPTIONS = ['count', 'Time', 'Mode', 'Sprayer', 'Flow Rate', 'Level', 'Angle', 'Stop Flag', 'State', 'A', 'V', 'W', 'Bat',
-                     'L_speed', 'L_direction', 'R_speed', 'R_direction', 'Steer', 'L_Amp', 'R_Amp', 'X', 'Y', 'Speed'];
+const CAN_OPTIONS =  ['count','Time','Mode', 'SBUS','Relay1','Relay2',"Flow Rate","Level","Angle","Stop Flag","State","A","V","W","Bat",
+                    "L_speed","L_direction","R_speed","R_direction","Steer","L_Amp","R_Amp","X","Y","Speed"];
+                     
 
 const SYSTEM_OPTIONS = ['count', 'Time', 'Temp', 'CPU%', 'Network', 'SSID'];
 
