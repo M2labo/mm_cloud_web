@@ -19,6 +19,16 @@ async function fetchPolygons(): Promise<any> {
     return data;
 }
 
+// APIエンドポイントからルートデータを取得する関数
+async function fetchRoute(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<any> {
+    const fiter_dict = {mm: mmId, date: date, time: logId};
+    const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
+    console.log(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+    const response = await fetch(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+    const data = await response.json();
+    return data;
+}
+
 // マップの中心を変更するコンポーネント
 interface ChangeMapCenterProps {
     position: LatLngTuple;
@@ -34,6 +44,7 @@ function ChangeMapCenter({ position }: ChangeMapCenterProps) {
 export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefined; logId?: string | undefined; size?:string; zoom?:number}> = ({ mmId, date, logId, size, zoom }) => {
     const [dataFrame, setDataFrame] = useState<string[][]>([]);
     const [multiPolyline, setMultiPolyline] = useState<LatLngTuple[][]>([[]]);
+    const [routePolyline, setRoutePolyline] = useState<LatLngTuple[][]>([[]]);
     const [position, setPosition] = useState<LatLngTuple>([36.252261, 137.866767]);
     const [polygons, setPolygons] = useState<{ id: number; name: string; customer: string; customer_id: number; polygon: LatLngTuple[] }[]>([]);
 
@@ -98,6 +109,24 @@ export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefine
         return () => { isSubscribed = false; };
     }, []);
 
+    // コンポーネントがマウントされたときにルートを取得し、routePolylineにセットする
+    useEffect(() => {
+        let isSubscribed = true;
+        console.log(mmId, date, logId);
+        fetchRoute(mmId, date, logId)
+            .then(data => {
+                if (isSubscribed) {
+                    console.log(data);
+                    console.log(JSON.parse(data.result)[0].coordinates);
+                    const routeData = JSON.parse(data.result)[0].coordinates.map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[];
+                    setRoutePolyline([routeData]);
+                }
+            })
+            .catch(console.error);
+
+        return () => { isSubscribed = false; };
+    }, []);
+
     return (
         <div>
             <MapContainer center={position} zoom={zoom?zoom:18} maxZoom={25} style={{ height: size?size:"50vh" }}>
@@ -106,7 +135,8 @@ export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefine
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {/* CSVファイルから取得した経路データを表示 */}
-                <Polyline pathOptions={{ color: 'lime' }} positions={multiPolyline} />
+                <Polyline pathOptions={{ color: 'grey' }} positions={routePolyline} />
+                <Polyline pathOptions={{ color: 'lime' }} positions={multiPolyline} />                
                 {/* APIから取得したポリゴンデータを表示 */}
                 {polygons.map(polygon => (
                     <Polygon key={polygon.id} pathOptions={{ color: 'red' }} positions={polygon.polygon}>
