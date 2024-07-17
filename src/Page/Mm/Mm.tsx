@@ -5,6 +5,15 @@ import React, { useState, useEffect } from 'react';
 import { Summary } from '../../components/Log/Summary';
 import { Header } from '../../components/Header/Header';
 
+async function fetchSummary(mmId: string | undefined): Promise<any> {
+  const fiter_dict = { mm: mmId};
+  const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
+  console.log(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+  const response = await fetch(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/summary?${queryParams}`);
+  const data = await response.json();
+  return data;
+}
+
 export function Mm() {
   const navigate = useNavigate();
   const [folder, setFolder] = useState<string[]>([]);
@@ -12,44 +21,45 @@ export function Mm() {
   const [yearFilter, setYearFilter] = useState(''); // 年フィルター用の状態
   const [monthFilter, setMonthFilter] = useState(''); // 月フィルター用の状態
   const { mmId } = useParams(); 
+  const [summaries, setSummaries] = useState<any[]>([]);
 
-  useEffect(() => {
-    console.log(mmId);
-    // AWS Amplifyのlist関数を使用してフォルダリストを取得
-    list({
-      prefix: mmId + '/',
-      options: {
-        listAll: true
-      }
-    }).then((data) => {
-      const folder: Set<string> = new Set();
-      console.log(data);
-      // 取得したデータからフォルダ名を抽出し、Setに追加
-      data.items.forEach((file) => {
-        const folderName = file.key.split('/').slice(1, 3).join('');
-        if (folderName !== 'summary.csv' && folderName !== file.key.split('/').slice(1, 2).join('') + 'summary.csv') {
-          folder.add(folderName);
-        }
-      });
-      // フォルダ名を配列に変換してセット
-      setFolder(Array.from(folder).sort((a, b) => b.localeCompare(a))); // 初回読み込み時に降順ソート
-    }).catch((error) => {
-      console.log(error);
-    });
-  }, [mmId]);
+  // useEffect(() => {
+  //   console.log(mmId);
+  //   // AWS Amplifyのlist関数を使用してフォルダリストを取得
+  //   list({
+  //     prefix: mmId + '/',
+  //     options: {
+  //       listAll: true
+  //     }
+  //   }).then((data) => {
+  //     const folder: Set<string> = new Set();
+  //     console.log(data);
+  //     // 取得したデータからフォルダ名を抽出し、Setに追加
+  //     data.items.forEach((file) => {
+  //       const folderName = file.key.split('/').slice(1, 3).join('');
+  //       if (folderName !== 'summary.csv' && folderName !== file.key.split('/').slice(1, 2).join('') + 'summary.csv') {
+  //         folder.add(folderName);
+  //       }
+  //     });
+  //     // フォルダ名を配列に変換してセット
+  //     setFolder(Array.from(folder).sort((a, b) => b.localeCompare(a))); // 初回読み込み時に降順ソート
+  //   }).catch((error) => {
+  //     console.log(error);
+  //   });
+  // }, [mmId]);
 
   // ソート順変更ハンドラー
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const newSortOrder = event.target.value;
     // ソート順に基づいてフォルダ配列をソート
-    const sortedFolder = [...folder].sort((a, b) => {
+    const sortedSummaries = [...summaries].sort((a, b) => {
       if (newSortOrder === 'asc') {
-        return a.localeCompare(b);
+        return a.date.localeCompare(b.date);
       } else {
-        return b.localeCompare(a);
+        return b.date.localeCompare(a.date);
       }
     });
-    setFolder(sortedFolder);
+    setSummaries(sortedSummaries);
     setSortOrder(newSortOrder);
   };
 
@@ -64,14 +74,29 @@ export function Mm() {
   };
 
   // 年と月のフィルター適用後のフォルダーリスト
-  const filteredFolder = folder.filter(f => 
-    (yearFilter === '' || f.slice(0, 4) === yearFilter) &&
-    (monthFilter === '' || f.slice(4, 6) === monthFilter)
+  const filteredSummaries = summaries.filter(f => 
+    (yearFilter === '' || f.date.slice(0, 4) === yearFilter) &&
+    (monthFilter === '' || f.date.slice(4, 6) === monthFilter)
   );
 
   // 年と月のリストを抽出
-  const years = Array.from(new Set(folder.map(f => f.slice(0, 4))));
-  const months = Array.from(new Set(folder.map(f => f.slice(4, 6))));
+  const years = Array.from(new Set(summaries.map(f => f.date.slice(0, 4))));
+  const months = Array.from(new Set(summaries.map(f => f.date.slice(4, 6))));
+
+  useEffect(() => {
+      let isSubscribed = true;
+      console.log(mmId);
+      fetchSummary(mmId)
+          .then(data => {
+              if (isSubscribed) {
+                  console.log(JSON.parse(data.result)); 
+                  setSummaries(JSON.parse(data.result));
+              }
+          })
+          .catch(console.error);
+
+      return () => { isSubscribed = false; };
+  }, []);
 
   return (
     <>
@@ -108,12 +133,29 @@ export function Mm() {
           </div>
         </div>
         {/* フィルター後のフォルダリストを表示 */}
-        <ul className="list-none">
+        {/* <ul className="list-none">
           {filteredFolder.map((folder, index) => (
             <li key={index} className="mb-4">
               <Summary fileKey={`${mmId}/${folder?.slice(0, 4)}/${folder?.slice(4, 8)}/summary.csv`} fileName={`${folder?.slice(0, 4)}/${folder?.slice(4, 6)}/${folder?.slice(6, 8)}`} url={`#/log/${mmId}/${folder}`} unit="km" />
             </li>
           ))}
+        </ul> */}
+        <ul className="list-none">
+            {filteredSummaries.map((summary, index) => (
+                <li key={index} className="mb-4">
+                    <a href={`#/log/${mmId}/${summary.date}`}>
+                        <div className="p-4 bg-white shadow-md rounded-lg my-4">
+                            <p className="text-lg font-semibold mb-2">{`${summary.date?.slice(0, 4)}/${summary.date?.slice(4, 6)}/${summary.date?.slice(6, 8)}`}</p>
+                            <p>
+                            走行時間：{summary.driving_time}時間, 
+                            走行距離：{summary.distance}km, 
+                            散布量：{summary.flow_volume.toFixed(1)}L, 
+                            消費電力：{summary.power.toFixed(1)}Wh
+                            </p>
+                        </div>
+                    </a>
+                </li>
+            ))}
         </ul>
       </div>
     </>
