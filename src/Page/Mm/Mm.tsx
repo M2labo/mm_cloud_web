@@ -89,8 +89,10 @@ export function Mm() {
       fetchSummary(mmId)
           .then(data => {
               if (isSubscribed) {
-                  console.log(JSON.parse(data.result)); 
-                  setSummaries(JSON.parse(data.result));
+                  const parsedData = JSON.parse(data.result);
+                  const sortedData = parsedData.sort((a: any, b: any) => b.date.localeCompare(a.date)); // 初回読み込み時に降順ソート
+                  console.log(sortedData);
+                  setSummaries(sortedData);
               }
           })
           .catch(console.error);

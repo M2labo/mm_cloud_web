@@ -44,8 +44,10 @@ export function Top() {
         fetchSummary()
             .then(data => {
                 if (isSubscribed) {
-                    console.log(JSON.parse(data.result)); 
-                    setSummaries(JSON.parse(data.result));
+                    const parsedData = JSON.parse(data.result);
+                    const sortedData = parsedData.sort((a: any, b: any) => a.mm.localeCompare(b.mm)); // 初回読み込み時に昇順ソート
+                    console.log(sortedData);
+                    setSummaries(sortedData);
                 }
             })
             .catch(console.error);

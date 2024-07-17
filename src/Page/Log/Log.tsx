@@ -53,8 +53,10 @@ export function Log() {
         fetchSummary(mmId, date)
             .then(data => {
                 if (isSubscribed) {
-                    console.log(JSON.parse(data.result)); 
-                    setSummaries(JSON.parse(data.result));
+                    const parsedData = JSON.parse(data.result);
+                    const sortedData = parsedData.sort((a: any, b: any) => a.time.localeCompare(b.time)); // 初回読み込み時に昇順ソート
+                    console.log(sortedData);
+                    setSummaries(sortedData);
                 }
             })
             .catch(console.error);
@@ -86,6 +88,7 @@ export function Log() {
                                     散布量：{summary.flow_volume.toFixed(1)}L, 
                                     消費電力：{summary.power.toFixed(1)}Wh
                                     </p>
+                                    <p>コメント：{summary.comment}</p>
                                 </div>
                             </a>
                         </li>
