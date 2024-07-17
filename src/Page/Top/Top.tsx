@@ -71,7 +71,7 @@ export function Top() {
                 <ul className="list-none">
                     {summaries.map((summary, index) => (
                         <li key={index} className="mb-4">
-                            <a href={`/#/mm/${summary.mm}`}>
+                            <a href={`#/mm/${summary.mm}`}>
                                 <div className="p-4 bg-white shadow-md rounded-lg my-4">
                                     <p className="text-lg font-semibold mb-2">{`${summary.mm}`}</p>
                                     <p>
