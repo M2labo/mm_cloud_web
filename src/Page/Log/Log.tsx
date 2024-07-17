@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { list } from 'aws-amplify/storage';
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { Summary } from '../../components/Log/Summary';
 import { Header } from '../../components/Header/Header';
 
 async function fetchSummary(mmId: string | undefined, date: string | undefined): Promise<any> {
-    const fiter_dict = { mm: mmId, date: date};
-    const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
+    const filter_dict = { mm: mmId, date: date };
+    const queryParams = new URLSearchParams({ filter: JSON.stringify(filter_dict) });
     console.log(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
     const response = await fetch(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/summary?${queryParams}`);
     const data = await response.json();
@@ -16,36 +15,10 @@ async function fetchSummary(mmId: string | undefined, date: string | undefined):
 
 export function Log() {
     const navigate = useNavigate();
-    const [folder, setFolder] = useState<string[]>([]);
     const { mmId, date } = useParams(); 
-    const path = `${mmId}/${date?.slice(0,4)}/${date?.slice(4,8)}/`;
     const [summaries, setSummaries] = useState<any[]>([]);
-
-    // useEffect(() => {
-    //     console.log(mmId + '/' + date?.slice(0,4) + '/' + date?.slice(4,8));
-    //     list({
-    //         prefix: mmId + '/' + date?.slice(0,4) + '/' + date?.slice(4,8),
-    //         options: {
-    //             listAll: true
-    //           }
-
-    //     }).then((data) => {
-    //         const folder: Set<string> = new Set();
-    //         console.log(data);
-    //         data.items.forEach((file) => {
-    //             const folderName = file.key.split('/').slice(3, 4).join('');
-    //             if (folderName !== 'summary.csv') { 
-    //                 folder.add(folderName);
-    //             }
-    //         });
-    //         setFolder(Array.from(folder));
-
-    //     }
-    //     ).catch((error) => {
-    //         console.log(error);
-    //     });
-    //     }
-    // , []);
+    const [editIndex, setEditIndex] = useState<number | null>(null);
+    const [comment, setComment] = useState<string>('');
 
     useEffect(() => {
         let isSubscribed = true;
@@ -62,35 +35,130 @@ export function Log() {
             .catch(console.error);
 
         return () => { isSubscribed = false; };
-    }, []);
+    }, [mmId, date]);
+
+
+    const handleCommentSubmit = async(e: React.FormEvent, time: string) => {
+        e.preventDefault();
+        // コメント投稿のロジックをここに追加
+        console.log(`コメントを投稿: ${time}, ${comment}`);
+        try {
+            const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log');
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    data: {
+                        mm: mmId,
+                        date: date,
+                        time: time,
+                        driving_time: summaries[editIndex!].driving_time,
+                        distance: summaries[editIndex!].distance,
+                        flow_volume: summaries[editIndex!].flow_volume,
+                        power: summaries[editIndex!].power,
+                        route_id: summaries[editIndex!].route_id,
+                        comment: comment
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log('Success:', data);
+            // console.log('comment posted:', data.result['id']);
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+        // 送信後の処理 (例: 編集モード解除、コメントフィールドのクリア)
+        setEditIndex(null);
+        summaries[editIndex!].comment = comment;
+        setComment('');
+    };
+
+    const handleDetailNavigate = (time: string) => {
+        navigate(`/detail/${mmId}/${date}/${time}`);
+    };
 
     return (
         <>
             <Header />
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4 text-center md:text-left">時刻</h1>
-                {/* <ul className="list-none">
-                    {folder.map((folder, index) => (
-                        <li key={index} className="mb-4">
-                            <Summary fileKey={`${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${folder}/summary.csv`} fileName={`${folder?.slice(0, 2)}:${folder?.slice(2, 4)}:${folder?.slice(4, 6)}`} url={`#/detail/${mmId}/${date}/${folder}`} unit="m" />
-                        </li>
-                    ))}
-                </ul> */}
                 <ul className="list-none">
                     {summaries.map((summary, index) => (
                         <li key={index} className="mb-4">
-                            <a href={`#/detail/${mmId}/${date}/${summary.time}`}>
-                                <div className="p-4 bg-white shadow-md rounded-lg my-4">
-                                    <p className="text-lg font-semibold mb-2">{`${summary.time?.slice(0, 2)}:${summary.time?.slice(2, 4)}:${summary.time?.slice(4, 6)}`}</p>
-                                    <p>
+                            <div 
+                                className="p-4 bg-white shadow-md rounded-lg my-4 cursor-pointer" 
+                                onClick={() => handleDetailNavigate(summary.time)}
+                            >
+                                <p className="text-lg font-semibold mb-2">{`${summary.time?.slice(0, 2)}:${summary.time?.slice(2, 4)}:${summary.time?.slice(4, 6)}`}</p>
+                                <p className='mb-2'>
                                     走行時間：{summary.driving_time.toFixed(0)}秒, 
                                     走行距離：{summary.distance.toFixed(0)}m, 
                                     散布量：{summary.flow_volume.toFixed(1)}L, 
                                     消費電力：{summary.power.toFixed(1)}Wh
-                                    </p>
-                                    <p>コメント：{summary.comment}</p>
-                                </div>
-                            </a>
+                                </p>
+                                {editIndex === index ? (
+                                    <div className="flex flex-row items-center">
+                                        <p className="mr-2">コメント：</p>
+                                        <input 
+                                            type="text" 
+                                            className="border rounded p-1 mr-2" 
+                                            value={comment}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                setComment(e.target.value);
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}
+                                        />
+                                        <button 
+                                            type="submit" 
+                                            className="p-1 bg-blue-500 text-white rounded" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleCommentSubmit(e, summary.time);
+                                            }}
+                                        >
+                                            保存
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            className="p-1 bg-blue-500 text-white rounded ml-2" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditIndex(null);
+                                                setComment('');
+                                            }}
+                                        >
+                                            キャンセル
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-row items-center">
+                                        {summary.comment?<p className="mr-2">コメント：{summary.comment}</p>:<></>}
+                                        <button 
+                                            type="button" 
+                                            className="p-1 bg-blue-500 text-white rounded ml-2" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditIndex(index);
+                                                setComment(summary.comment || '');
+                                            }}
+                                        >
+                                            {summary.comment?"編集":"コメントを投稿"}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </li>
                     ))}
                 </ul>
