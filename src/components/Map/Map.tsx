@@ -10,20 +10,26 @@ async function getRoute(mmId: string | undefined, date: string | undefined, logI
     return response.text();
 }
 
+async function getWaypoint(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<string> {
+    const urlResponse = await getUrl({ key: `${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${logId}/WAYPOINT.csv` });
+    const response = await fetch(urlResponse.url.href);
+    return response.text();
+}
+
 async function fetchPolygons(): Promise<any> {
     const response = await fetch('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/all_field');
     const data = await response.json();
     return data;
 }
 
-async function fetchRoute(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<any> {
-    const fiter_dict = { mm: mmId, date: date, time: logId };
-    const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
-    console.log(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-    const response = await fetch(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-    const data = await response.json();
-    return data;
-}
+// async function fetchRoute(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<any> {
+//     const fiter_dict = { mm: mmId, date: date, time: logId };
+//     const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
+//     console.log(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+//     const response = await fetch(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+//     const data = await response.json();
+//     return data;
+// }
 
 interface ChangeMapCenterProps {
     position: LatLngTuple;
@@ -145,22 +151,44 @@ export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefine
         return () => { isSubscribed = false; };
     }, []);
 
+    // useEffect(() => {
+    //     let isSubscribed = true;
+    //     console.log(mmId, date, logId);
+    //     fetchRoute(mmId, date, logId)
+    //         .then(data => {
+    //             if (isSubscribed) {
+    //                 console.log(data);
+    //                 console.log(JSON.parse(data.result)[0].coordinates);
+    //                 const routeData = JSON.parse(data.result)[0].coordinates.map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[];
+    //                 setRoutePolyline([routeData]);
+    //             }
+    //         })
+    //         .catch(console.error);
+
+    //     return () => { isSubscribed = false; };
+    // }, []);
+
     useEffect(() => {
         let isSubscribed = true;
-        console.log(mmId, date, logId);
-        fetchRoute(mmId, date, logId)
+        if (!mmId || !date || !logId) return;
+        getWaypoint(mmId, date, logId)
             .then(data => {
                 if (isSubscribed) {
-                    console.log(data);
-                    console.log(JSON.parse(data.result)[0].coordinates);
-                    const routeData = JSON.parse(data.result)[0].coordinates.map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[];
-                    setRoutePolyline([routeData]);
+                    const dataRows: LatLngTuple[][] = [];
+                    data.split('\n').forEach(line => {
+                        if (line === "") return;
+                        const cells = line.split(',').map(cell => parseFloat(cell)) as unknown as LatLngTuple[];
+                        if (typeof cells[0] === 'number' && typeof cells[1] === 'number')
+                            dataRows.push(cells);
+                    });
+                    console.log("WAYPOINT",dataRows);
+                    setRoutePolyline(dataRows);
                 }
             })
             .catch(console.error);
 
         return () => { isSubscribed = false; };
-    }, []);
+    }, [mmId, date, logId]);
 
     return (
         <div>
