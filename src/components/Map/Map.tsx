@@ -1,20 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Polyline, useMap, Polygon, Popup, Marker, useMapEvent } from "react-leaflet";
+import { MapContainer, TileLayer, Polygon, Popup, useMap } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import { getUrl } from "@aws-amplify/storage";
-import { LatLngTuple, LatLngExpression } from "leaflet";
-
-async function getRoute(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<string> {
-    const urlResponse = await getUrl({ key: `${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${logId}/ROUTE.csv` });
-    const response = await fetch(urlResponse.url.href);
-    return response.text();
-}
-
-async function getWaypoint(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<string> {
-    const urlResponse = await getUrl({ key: `${mmId}/${date?.slice(0, 4)}/${date?.slice(4, 8)}/${logId}/WAYPOINT.csv` });
-    const response = await fetch(urlResponse.url.href);
-    return response.text();
-}
+import { LatLngTuple } from "leaflet";
 
 async function fetchPolygons(): Promise<any> {
     const response = await fetch('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/all_field');
@@ -22,114 +9,46 @@ async function fetchPolygons(): Promise<any> {
     return data;
 }
 
-// async function fetchRoute(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<any> {
-//     const fiter_dict = { mm: mmId, date: date, time: logId };
-//     const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
-//     console.log(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-//     const response = await fetch(`https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-//     const data = await response.json();
-//     return data;
-// }
-
 interface ChangeMapCenterProps {
     position: LatLngTuple;
+    zoom: number;
 }
 
-function ChangeMapCenter({ position }: ChangeMapCenterProps) {
+function ChangeMapCenter({ position, zoom }: ChangeMapCenterProps) {
     const map = useMap();
-    map.panTo(position);
+    useEffect(() => {
+        map.setView(position, zoom);
+    }, [position, zoom, map]);
     return null;
 }
 
-const calculateAverage = (numbers: number[]): number => {
-    const validNumbers = numbers.filter(num => !isNaN(num));
-    const total = validNumbers.reduce((acc, num) => acc + num, 0);
-    return validNumbers.length ? total / validNumbers.length : 0;
+interface Field {
+    id: number;
+    name: string;
+    customer_id: number;
+}  
+
+interface SelectedFieldProps {
+    selectedField: Field | null;
+    setSelectedField: React.Dispatch<React.SetStateAction<Field | null>>;
+    size?: string;
+    zoom?: number;
+    center?: LatLngTuple;
 }
 
-const HoverMarker: React.FC<{ position: LatLngTuple; difference: number; averageDifference: number }> = ({ position, difference, averageDifference }) => {
-    return (
+// ポリゴンの中心を計算する関数
+const calculatePolygonCenter = (polygon: LatLngTuple[]): LatLngTuple => {
+    const sum = polygon.reduce((acc, coord) => {
+        return [acc[0] + coord[0], acc[1] + coord[1]];
+    }, [0, 0] as LatLngTuple);
 
-        <Popup position={position}>
-            ずれ : {(difference*100).toPrecision(3)} cm<br />
-            平均 : {(averageDifference * 100).toPrecision(3)} cm
-        </Popup>
+    return [sum[0] / polygon.length, sum[1] / polygon.length] as LatLngTuple;
+};
 
-    );
-}
-
-const PolylineWithHover: React.FC<{ positions: LatLngTuple[][], differences: number[] }> = ({ positions, differences }) => {
-    const [hoverData, setHoverData] = useState<{ position: LatLngTuple; difference: number } | null>(null);
-    const averageDifference = calculateAverage(differences);
-
-    useMapEvent('mousemove', (e) => {
-        const { lat, lng } = e.latlng;
-        positions.forEach((line, lineIndex) => {
-            line.forEach((point, pointIndex) => {
-                if (Math.abs(point[0] - lat) < 0.000001 && Math.abs(point[1] - lng) < 0.000001) {
-                    setHoverData({ position: [point[0], point[1]], difference: differences[pointIndex] });
-                }
-            });
-        });
-    });
-
-    return (
-        <>
-            <Polyline pathOptions={{ color: 'lime' }} positions={positions} />
-            {hoverData && <HoverMarker position={hoverData.position} difference={hoverData.difference} averageDifference={averageDifference} />}
-        </>
-    );
-}
-
-export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefined; logId?: string | undefined; size?: string; zoom?: number; center?: LatLngTuple; }> = ({ mmId, date, logId, size, zoom, center }) => {
-    const [dataFrame, setDataFrame] = useState<string[][]>([]);
-    const [multiPolyline, setMultiPolyline] = useState<LatLngTuple[][]>([[]]);
-    const [routePolyline, setRoutePolyline] = useState<LatLngTuple[][]>([[]]);
+export const Map: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedField, size, zoom, center }) => {
     const [position, setPosition] = useState<LatLngTuple>(center ? center : [36.252261, 137.866767]);
+    const [currentZoom, setCurrentZoom] = useState<number>(zoom ? zoom : 18);
     const [polygons, setPolygons] = useState<{ id: number; name: string; customer: string; customer_id: number; polygon: LatLngTuple[] }[]>([]);
-    const [differences, setDifferences] = useState<number[]>([]);
-
-    useEffect(() => {
-        let isSubscribed = true;
-        if (!mmId || !date || !logId) return;
-        getRoute(mmId, date, logId)
-            .then(data => {
-                if (isSubscribed) {
-                    const dataRows: string[][] = [];
-                    data.split('\n').forEach(line => {
-                        const cells = line.split(',');
-                        dataRows.push(cells);
-                    });
-                    setDataFrame(dataRows);
-                }
-            })
-            .catch(console.error);
-
-        return () => { isSubscribed = false; };
-    }, [mmId, date, logId]);
-
-    useEffect(() => {
-        if (!mmId || !date || !logId) return;
-        const newMultiPolyline: LatLngTuple[][] = [[]];
-        const newDifferences: number[] = [];
-        let newPosition: LatLngTuple = [0, 0];
-
-        dataFrame.forEach(row => {
-            const lat = parseFloat(row[0]) / 10000000;
-            const lng = parseFloat(row[1]) / 10000000;
-            const difference = parseFloat(row[4]);
-
-            if (!isNaN(lat) && !isNaN(lng)) {
-                newMultiPolyline[0].push([lat, lng]);
-                newDifferences.push(difference);
-                newPosition = [lat, lng];
-            }
-        });
-
-        setMultiPolyline(newMultiPolyline);
-        setDifferences(newDifferences);
-        setPosition(newPosition);
-    }, [dataFrame]);
 
     useEffect(() => {
         let isSubscribed = true;
@@ -151,62 +70,43 @@ export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefine
         return () => { isSubscribed = false; };
     }, []);
 
-    // useEffect(() => {
-    //     let isSubscribed = true;
-    //     console.log(mmId, date, logId);
-    //     fetchRoute(mmId, date, logId)
-    //         .then(data => {
-    //             if (isSubscribed) {
-    //                 console.log(data);
-    //                 console.log(JSON.parse(data.result)[0].coordinates);
-    //                 const routeData = JSON.parse(data.result)[0].coordinates.map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[];
-    //                 setRoutePolyline([routeData]);
-    //             }
-    //         })
-    //         .catch(console.error);
-
-    //     return () => { isSubscribed = false; };
-    // }, []);
-
     useEffect(() => {
-        let isSubscribed = true;
-        if (!mmId || !date || !logId) return;
-        getWaypoint(mmId, date, logId)
-            .then(data => {
-                if (isSubscribed) {
-                    const dataRows: LatLngTuple[][] = [];
-                    data.split('\n').forEach(line => {
-                        if (line === "") return;
-                        const cells = line.split(',').map(cell => parseFloat(cell)) as unknown as LatLngTuple[];
-                        if (typeof cells[0] === 'number' && typeof cells[1] === 'number')
-                            dataRows.push(cells);
-                    });
-                    console.log("WAYPOINT",dataRows);
-                    setRoutePolyline(dataRows);
-                }
-            })
-            .catch(console.error);
+        if (selectedField) {
+            const field = polygons.find(polygon => polygon.id === selectedField.id);
+            if (field) {
+                const center = calculatePolygonCenter(field.polygon);
+                setPosition(center);
+                setCurrentZoom(18); // フィールド選択時のズームレベルを設定
+            }
+        }
+    }, [selectedField, polygons]);
 
-        return () => { isSubscribed = false; };
-    }, [mmId, date, logId]);
+    const handlePolygonClick = (polygon: { id: number; name: string; customer: string; customer_id: number; polygon: LatLngTuple[] }) => {
+        setSelectedField({ id: polygon.id, name: polygon.name, customer_id: polygon.customer_id });
+    };
 
     return (
         <div>
-            <MapContainer center={position} zoom={zoom ? zoom : 18} maxZoom={25} style={{ height: size ? size : "50vh" }}>
+            <MapContainer center={position} zoom={currentZoom} maxZoom={25} style={{ height: size ? size : "50vh" }}>
                 <TileLayer
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <Polyline pathOptions={{ color: 'grey' }} positions={routePolyline} />
-                <PolylineWithHover positions={multiPolyline} differences={differences} />
                 {polygons.map(polygon => (
-                    <Polygon key={polygon.id} pathOptions={{ color: 'red' }} positions={polygon.polygon}>
+                    <Polygon 
+                        key={polygon.id} 
+                        pathOptions={{ color: 'red' }} 
+                        positions={polygon.polygon}
+                        eventHandlers={{
+                            click: () => handlePolygonClick(polygon),
+                        }}
+                    >
                         <Popup>
                             {polygon.customer} {polygon.name}
                         </Popup>
                     </Polygon>
                 ))}
-                <ChangeMapCenter position={position} />
+                <ChangeMapCenter position={position} zoom={currentZoom} />
             </MapContainer>
         </div>
     );

@@ -1,4 +1,4 @@
-import { Map } from '../../components/Map/Map';
+import { Map } from '../../components/Data/Map';
 import { Data } from '../../components/Data/Data';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState } from 'react';
