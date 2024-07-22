@@ -112,7 +112,7 @@ export const FieldLog: React.FC<FieldLogProps> = ({ fieldId }) => {
                 <li key={index} className="mb-4">
                     <a href={`#/log/${summary.mm}/${summary.date}`}>
                         <div className="p-4 bg-white shadow-md rounded-lg my-4">
-                            <p className="text-lg font-semibold mb-2">{`${summary.date?.slice(0, 4)}/${summary.date?.slice(4, 6)}/${summary.date?.slice(6, 8)}`}</p>
+                            <p className="text-lg font-semibold mb-2">{`${summary.date?.slice(0, 4)}/${summary.date?.slice(4, 6)}/${summary.date?.slice(6, 8)}　${summary.mm}`}</p>
                             <p>
                             走行時間：{summary.driving_time}時間, 
                             走行距離：{summary.distance}km, 
