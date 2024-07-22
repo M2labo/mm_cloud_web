@@ -16,7 +16,7 @@ export function MapPage() {
     return (
         <div className="relative h-screen">
             <Header />
-            <div className="relative h-full">
+            <div className="relative">
                 <Map zoom={18} size="95vh" center={[36.252261, 137.866767]} selectedField={selectedField} setSelectedField={setSelectedField} />
                 <div className="absolute top-0 right-0 p-4" style={{ zIndex: 1000 }}>
                     <Field selectedField={selectedField} setSelectedField={setSelectedField} />
