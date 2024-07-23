@@ -106,11 +106,11 @@ export function Log() {
                                     消費電力：{summary.power.toFixed(1)}Wh
                                 </p>
                                 {editIndex === index ? (
-                                    <div className="flex flex-row items-center">
-                                        <p className="mr-2">コメント：</p>
+                                    <div className="flex flex-col md:flex-row items-start md:items-center">
+                                        <p className="mr-2 mb-2 md:mb-0">コメント：</p>
                                         <input 
                                             type="text" 
-                                            className="border rounded p-1 mr-2" 
+                                            className="border rounded p-1 mb-2 md:mb-0 mr-2 w-full md:w-auto" 
                                             value={comment}
                                             onChange={(e) => {
                                                 e.stopPropagation();
@@ -120,41 +120,45 @@ export function Log() {
                                                 e.stopPropagation();
                                             }}
                                         />
-                                        <button 
-                                            type="submit" 
-                                            className="p-1 bg-blue-500 text-white rounded" 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleCommentSubmit(e, summary.time);
-                                            }}
-                                        >
-                                            保存
-                                        </button>
-                                        <button 
-                                            type="button" 
-                                            className="p-1 bg-blue-500 text-white rounded ml-2" 
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setEditIndex(null);
-                                                setComment('');
-                                            }}
-                                        >
-                                            キャンセル
-                                        </button>
+                                        <div>
+                                            <button 
+                                                type="submit" 
+                                                className="p-1 bg-blue-500 text-white rounded" 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleCommentSubmit(e, summary.time);
+                                                }}
+                                            >
+                                                保存
+                                            </button>
+                                            <button 
+                                                type="button" 
+                                                className="p-1 bg-blue-500 text-white rounded ml-2" 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setEditIndex(null);
+                                                    setComment('');
+                                                }}
+                                            >
+                                                キャンセル
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : (
-                                    <div className="flex flex-row items-center">
-                                        {summary.comment?<p className="mr-2">コメント：{summary.comment}</p>:<></>}
+                                    <div className="flex flex-col md:flex-row items-start md:items-center">
+                                        {summary.comment && (
+                                            <p className="mr-2 mb-2 md:mb-0">コメント：{summary.comment}</p>
+                                        )}
                                         <button 
                                             type="button" 
-                                            className="p-1 bg-blue-500 text-white rounded ml-2" 
+                                            className="p-1 bg-blue-500 text-white rounded ml-0 md:ml-2" 
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setEditIndex(index);
                                                 setComment(summary.comment || '');
                                             }}
                                         >
-                                            {summary.comment?"編集":"コメントを投稿"}
+                                            {summary.comment ? "編集" : "コメントを投稿"}
                                         </button>
                                     </div>
                                 )}
