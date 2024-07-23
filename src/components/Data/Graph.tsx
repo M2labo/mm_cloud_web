@@ -141,7 +141,10 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
                 title: xAxisName,
                 rangeslider: {},
              },
-            yaxis: { title: yAxisName },
+            yaxis: { 
+                title: yAxisName,
+                fixedrange: false,
+             },
             yaxis2: {
             title: yAxisName2,
             overlaying: 'y',
