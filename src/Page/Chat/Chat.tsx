@@ -27,7 +27,8 @@ export function Chat() {
 
       if (response.ok) {
         const responseData = await response.text();
-        setMessages([...newMessages, { sender: 'MM', text: responseData }]);
+        const formattedText = responseData.replace(/\n/g, '<br />');
+        setMessages([...newMessages, { sender: 'MM', text: formattedText }]);
       } else {
         setMessages([...newMessages, { sender: 'System', text: 'Failed to get response from AI.' }]);
       }
@@ -45,6 +46,10 @@ export function Chat() {
     }
   };
 
+  const formatMessageText = (text: string) => {
+    return { __html: text };
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <Header />
@@ -58,7 +63,10 @@ export function Chat() {
               <div
                 className={`max-w-xs p-3 rounded-lg ${message.sender === 'You' ? 'bg-blue-200' : 'bg-gray-300'}`}
               >
-                <p className="text-black">{message.text}</p>
+                <p
+                  className="text-black"
+                  dangerouslySetInnerHTML={formatMessageText(message.text)}
+                ></p>
               </div>
             </div>
           ))}
