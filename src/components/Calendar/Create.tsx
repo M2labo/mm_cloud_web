@@ -24,7 +24,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
 
     useEffect(() => {
         // APIからデータを取得する
-        fetch('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/all_customer')
+        fetch('https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/all_customer')
             .then(response => response.json())
             .then((data: any) => {
                 console.log("create"); 
@@ -94,7 +94,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
                 return;
             }
 
-            const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
+            const url = new URL('https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/report');
             console.log('Selected customer:', selectedCustomer.id);
 
             const response = await fetch(url, {

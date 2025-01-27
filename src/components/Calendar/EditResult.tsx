@@ -18,7 +18,7 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
     const handleCompletion = async () => {
         
         try {
-            const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
+            const url = new URL('https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/report');
             const filter = JSON.stringify({ id: selectedReport.id });
             url.searchParams.append('filter', filter);
 
