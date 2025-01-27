@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 async function fetchSummary(fieldId: number | null): Promise<any> {
   const fiter_dict = { field_id: fieldId};
   const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
-  console.log(`https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-  const response = await fetch(`https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/summary_field?${queryParams}`);
+  console.log(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+  const response = await fetch(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/summary_field?${queryParams}`);
   const data = await response.json();
   return data;
 }

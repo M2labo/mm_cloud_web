@@ -18,7 +18,7 @@ export const Plan: React.FC<ReportProps> = ({ selectedReport }) => {
         if (!confirmDelete) return;
 
         try {
-            const url = new URL('https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/report');
+            const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
             const filter = JSON.stringify({ id: selectedReport.id });
             url.searchParams.append('filter', filter);
 

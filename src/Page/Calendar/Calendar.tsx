@@ -67,7 +67,7 @@ export function Calendar() {
       //APIから詳細情報を取得
       console.log("詳細画面を変更");
       try {
-        const url = new URL('https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/report');
+        const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
         const filter = JSON.stringify({ id: id });
         url.searchParams.append('filter', filter);
         console.log("filter");
@@ -120,7 +120,7 @@ export function Calendar() {
     
     //APIから詳細情報を取得
     try {
-      const url = new URL('https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/report');
+      const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
       const filter = JSON.stringify({ id: info.event.extendedProps.reportId });
       url.searchParams.append('filter', filter);
 
@@ -161,7 +161,7 @@ export function Calendar() {
   //APIから全ての予定と結果を取得
   useEffect(() => {
     // APIからデータを取得する
-    fetch('https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/all_calendar')
+    fetch('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/all_calendar')
         .then(response => response.json())
         .then((data: any) => {
             console.log(data); // レスポンスデータの形式を確認

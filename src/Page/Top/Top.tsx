@@ -7,8 +7,8 @@ import { Header } from '../../components/Header/Header';
 async function fetchSummary(): Promise<any> {
     // const fiter_dict = {};
     // const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
-    // console.log(`https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-    const response = await fetch(`https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/summary`);
+    // console.log(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+    const response = await fetch(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/summary`);
     const data = await response.json();
     return data;
 }

@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import { LatLngTuple } from "leaflet";
 
 async function fetchPolygons(): Promise<any> {
-    const response = await fetch('https://h6sf4fa6rn3kbutj3gicfua5si0hmzda.lambda-url.ap-northeast-1.on.aws/all_field');
+    const response = await fetch('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/all_field');
     const data = await response.json();
     return data;
 }
