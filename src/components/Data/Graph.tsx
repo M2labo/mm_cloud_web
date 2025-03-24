@@ -11,15 +11,15 @@ async function getMavlink(mmId: string | undefined, date: string | undefined, lo
     return response.text(); // Return the response text
 }
 
-export const Graph: React.FC<{ mmId: string | undefined; date: string | undefined; logId: string | undefined;}> = ({ mmId, date, logId }) => {
-    const [type, setType] = useState<string>("MAVLINK");
+export const Graph: React.FC<{ mmId: string | undefined; date: string | undefined; logId: string | undefined; defaultType?: string; defaultXAxis?:number; defaultYAxis?:number; defaultYAxis2?:number}> = ({ mmId, date, logId, defaultType, defaultXAxis, defaultYAxis, defaultYAxis2 }) => {
+    const [type, setType] = useState<string>(defaultType? defaultType : "MAVLINK");
     const [dataFrame, setDataFrame] = useState<string[][]>([]);
-    const [xAxis, setXAxis] = useState<number>(0);
+    const [xAxis, setXAxis] = useState<number>(defaultXAxis? defaultXAxis : 0);
     const [xAxisName, setXAxisName] = useState<string>("");
-    const [xAxis2, setXAxis2] = useState<number>(0);
-    const [yAxis, setYAxis] = useState<number>(0);
+    const [xAxis2, setXAxis2] = useState<number>(defaultXAxis? defaultXAxis : 0);
+    const [yAxis, setYAxis] = useState<number>(defaultYAxis? defaultYAxis : 0);
     const [yAxisName, setYAxisName] = useState<string>("");
-    const [yAxis2, setYAxis2] = useState<number>(0);
+    const [yAxis2, setYAxis2] = useState<number>(defaultYAxis2? defaultYAxis2 : 0);
     const [yAxisName2, setYAxisName2] = useState<string>("");
     const [items, setItems] = useState<string[]>([]);
     const [xData, setXData] = useState<number[]>([]);
@@ -64,6 +64,15 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
         return () => { isSubscribed = false; }; // Cleanup function to prevent setting state on unmounted component
     }, [mmId, date, logId, type]); // Dependency array to re-run effect when these props change
 
+    // 初期化時にX軸とY軸の名前を設定
+    useEffect(() => {
+        if (dataFrame.length > 0) {
+            setXAxisName(dataFrame[0][xAxis]);
+            setYAxisName(dataFrame[0][yAxis]);
+            setYAxisName2(dataFrame[0][yAxis2]);
+        }
+    }, [dataFrame, xAxis, yAxis]);
+
 
     //ボタン用のデータをセット
     useEffect(() => {
@@ -102,6 +111,8 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
         console.log("newX");
         console.log(newX);
         setXData(newX);
+        setXAxisMin(newX[0]);       //X軸の最小値をセット
+        setXAxisMax(newX[newX.length - 1]);     //X軸の最大値をセット
         setXData2(newX2);
         setYData(newY);
         setYData2(newY2); 
@@ -130,7 +141,10 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
                 title: xAxisName,
                 rangeslider: {},
              },
-            yaxis: { title: yAxisName },
+            yaxis: { 
+                title: yAxisName,
+                fixedrange: false,
+             },
             yaxis2: {
             title: yAxisName2,
             overlaying: 'y',
@@ -170,6 +184,7 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
         setMin2(min2);
 
     }, [dataFrame, xAxis, yAxis, yAxis2, xAxisName, yAxisName, yAxisName2, xAxisMin, xAxisMax, allData]);
+    
     // ボタンがクリックされたときの動作
     const selectX = (item:string, index:number) => {
         console.log(`${index} button clicked`);
@@ -200,7 +215,7 @@ export const Graph: React.FC<{ mmId: string | undefined; date: string | undefine
 
     return (
         <div className="p-4">
-            <select onChange={(e) => setType(e.target.value)} className="mb-4 p-2 border rounded">
+            <select value={type} onChange={(e) => setType(e.target.value)} className="mb-4 p-2 border rounded">
                 <option value="MAVLINK">MAVLINK</option>
                 <option value="CAN">CAN</option>
                 <option value="SYSTEM">SYSTEM</option>

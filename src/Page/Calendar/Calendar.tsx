@@ -67,7 +67,7 @@ export function Calendar() {
       //APIから詳細情報を取得
       console.log("詳細画面を変更");
       try {
-        const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
+        const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
         const filter = JSON.stringify({ id: id });
         url.searchParams.append('filter', filter);
         console.log("filter");
@@ -120,7 +120,7 @@ export function Calendar() {
     
     //APIから詳細情報を取得
     try {
-      const url = new URL('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/report');
+      const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
       const filter = JSON.stringify({ id: info.event.extendedProps.reportId });
       url.searchParams.append('filter', filter);
 
@@ -161,7 +161,7 @@ export function Calendar() {
   //APIから全ての予定と結果を取得
   useEffect(() => {
     // APIからデータを取得する
-    fetch('https://lsdlueq272y5yboojqgls6dcsi0ejsla.lambda-url.ap-northeast-1.on.aws/all_calendar')
+    fetch('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/all_calendar')
         .then(response => response.json())
         .then((data: any) => {
             console.log(data); // レスポンスデータの形式を確認
@@ -179,8 +179,8 @@ export function Calendar() {
   return (
     <>
       <Header />
-      <div className="flex">
-        <div className="w-3/4 p-4">
+      <div className="md:flex flex-column md:flex-row">
+        <div className="md:w-3/4 p-4">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]} 
             height='90vh'
@@ -189,9 +189,9 @@ export function Calendar() {
             locales={[jaLocale]}
             locale='ja'
             headerToolbar={{
-              left: 'prev,next today',
+              left: 'prev,next',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek', 
+              right: 'today', 
             }}
             eventContent={renderEventContent}
             events={calendar}
@@ -200,7 +200,7 @@ export function Calendar() {
             eventClick={eventClick}
           />
         </div>
-        <div className="w-1/4 p-4 bg-gray-100">
+        <div className="md:w-1/4 p-4 bg-gray-100">
           { detailDisplay === "create" && (
             <Create selectedDate={selectedDate} onChangeDetail={onChangeDetail}/> 
           )}

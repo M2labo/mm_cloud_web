@@ -1,52 +1,24 @@
-import { useNavigate } from 'react-router-dom';
-import { list } from 'aws-amplify/storage';
-import { useParams } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
-import { Summary } from '../../components/Log/Summary';
-import { Header } from '../../components/Header/Header';
 
-async function fetchSummary(mmId: string | undefined): Promise<any> {
-  const fiter_dict = { mm: mmId};
+
+async function fetchSummary(fieldId: number | null): Promise<any> {
+  const fiter_dict = { field_id: fieldId};
   const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
   console.log(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-  const response = await fetch(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/summary?${queryParams}`);
+  const response = await fetch(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/summary_field?${queryParams}`);
   const data = await response.json();
   return data;
 }
 
-export function Mm() {
-  const navigate = useNavigate();
-  const [folder, setFolder] = useState<string[]>([]);
+interface FieldLogProps {
+  fieldId: number | null;
+}
+
+export const FieldLog: React.FC<FieldLogProps> = ({ fieldId }) => {
   const [sortOrder, setSortOrder] = useState('desc'); // デフォルトで降順に設定
   const [yearFilter, setYearFilter] = useState(''); // 年フィルター用の状態
   const [monthFilter, setMonthFilter] = useState(''); // 月フィルター用の状態
-  const { mmId } = useParams(); 
   const [summaries, setSummaries] = useState<any[]>([]);
-
-  // useEffect(() => {
-  //   console.log(mmId);
-  //   // AWS Amplifyのlist関数を使用してフォルダリストを取得
-  //   list({
-  //     prefix: mmId + '/',
-  //     options: {
-  //       listAll: true
-  //     }
-  //   }).then((data) => {
-  //     const folder: Set<string> = new Set();
-  //     console.log(data);
-  //     // 取得したデータからフォルダ名を抽出し、Setに追加
-  //     data.items.forEach((file) => {
-  //       const folderName = file.key.split('/').slice(1, 3).join('');
-  //       if (folderName !== 'summary.csv' && folderName !== file.key.split('/').slice(1, 2).join('') + 'summary.csv') {
-  //         folder.add(folderName);
-  //       }
-  //     });
-  //     // フォルダ名を配列に変換してセット
-  //     setFolder(Array.from(folder).sort((a, b) => b.localeCompare(a))); // 初回読み込み時に降順ソート
-  //   }).catch((error) => {
-  //     console.log(error);
-  //   });
-  // }, [mmId]);
 
   // ソート順変更ハンドラー
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -85,8 +57,8 @@ export function Mm() {
 
   useEffect(() => {
       let isSubscribed = true;
-      console.log(mmId);
-      fetchSummary(mmId)
+      console.log(fieldId); 
+      fetchSummary(fieldId)
           .then(data => {
               if (isSubscribed) {
                   const parsedData = JSON.parse(data.result);
@@ -98,14 +70,14 @@ export function Mm() {
           .catch(console.error);
 
       return () => { isSubscribed = false; };
-  }, []);
+  }, [fieldId]);
 
   return (
     <>
-      <Header />
-      <div className="container mx-auto p-4">
+
+      <div className="p-4 bg-white shadow-2xl border-4 border-gray-800 rounded-lg overflow-wrap-break-word">
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold mb-4">日付</h1>
+          <h1 className="text-2xl font-bold mb-4">ログ</h1>
           <div className="flex flex-col md:flex-row w-full md:w-auto">
             <div className="mb-4 md:mb-0 md:mx-4 w-full md:w-auto">
               <label htmlFor="sortOrder" className="mr-2">ソート:</label>
@@ -134,20 +106,13 @@ export function Mm() {
             </div>
           </div>
         </div>
-        {/* フィルター後のフォルダリストを表示 */}
-        {/* <ul className="list-none">
-          {filteredFolder.map((folder, index) => (
-            <li key={index} className="mb-4">
-              <Summary fileKey={`${mmId}/${folder?.slice(0, 4)}/${folder?.slice(4, 8)}/summary.csv`} fileName={`${folder?.slice(0, 4)}/${folder?.slice(4, 6)}/${folder?.slice(6, 8)}`} url={`#/log/${mmId}/${folder}`} unit="km" />
-            </li>
-          ))}
-        </ul> */}
+        {filteredSummaries.length === 0 && <p>データがありません。</p>}
         <ul className="list-none">
             {filteredSummaries.map((summary, index) => (
                 <li key={index} className="mb-4">
-                    <a href={`#/log/${mmId}/${summary.date}`}>
+                    <a href={`#/log/${summary.mm}/${summary.date}`}>
                         <div className="p-4 bg-white shadow-md rounded-lg my-4">
-                            <p className="text-lg font-semibold mb-2">{`${summary.date?.slice(0, 4)}/${summary.date?.slice(4, 6)}/${summary.date?.slice(6, 8)}`}</p>
+                            <p className="text-lg font-semibold mb-2">{`${summary.date?.slice(0, 4)}/${summary.date?.slice(4, 6)}/${summary.date?.slice(6, 8)}　${summary.mm}`}</p>
                             <p>
                             走行時間：{summary.driving_time}時間, 
                             走行距離：{summary.distance}km, 

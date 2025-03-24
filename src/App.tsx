@@ -9,6 +9,9 @@ import { Top } from './Page/Top/Top';
 import { Log } from './Page/Log/Log';
 import { Mm } from './Page/Mm/Mm';
 import { Calendar } from './Page/Calendar/Calendar';
+import { MapPage } from './Page/Map/MapPage';
+import { Analysis } from './Page/Analysis/Analysis';
+import { Chat } from './Page/Chat/Chat';
 
 Amplify.configure(config);
 
@@ -35,6 +38,18 @@ const router = createHashRouter([
   {
     path: "/calendar",
     element: <Calendar />,
+  },
+  {
+    path: "/map",
+    element: <MapPage />,
+  },
+  {
+    path: "/analysis",
+    element: <Analysis />,
+  },
+  {
+    path: "/chat",
+    element: <Chat />,
   },
 
 
