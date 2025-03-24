@@ -28,7 +28,7 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
 
     useEffect(() => {
         // APIからデータを取得する
-        fetch('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/all_customer')
+        fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_customer')
             .then(response => response.json())
             .then((data: any) => {
                 if (data && data.result && Array.isArray(data.result.customers)) {

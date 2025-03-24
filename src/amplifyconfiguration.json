@@ -1,0 +1,26 @@
+{
+    "aws_project_region": "ap-northeast-1",
+    "aws_cognito_identity_pool_id": "ap-northeast-1:120918eb-6b2e-4f56-bbae-597c8b258e64",
+    "aws_cognito_region": "ap-northeast-1",
+    "aws_user_pools_id": "ap-northeast-1_wCPT2GH3h",
+    "aws_user_pools_web_client_id": "6qn51ft811ve20hc67oi8os61d",
+    "oauth": {},
+    "aws_cognito_username_attributes": [
+      "EMAIL"
+    ],
+    "aws_cognito_social_providers": [],
+    "aws_cognito_signup_attributes": [
+      "EMAIL"
+    ],
+    "aws_cognito_mfa_configuration": "OFF",
+    "aws_cognito_mfa_types": [],
+    "aws_cognito_password_protection_settings": {
+      "passwordPolicyMinLength": 8,
+      "passwordPolicyCharacters": []
+    },
+    "aws_cognito_verification_mechanisms": [
+      "EMAIL"
+    ],
+    "aws_user_files_s3_bucket": "mmcloud-mass-production",
+    "aws_user_files_s3_bucket_region": "ap-northeast-1"
+  }

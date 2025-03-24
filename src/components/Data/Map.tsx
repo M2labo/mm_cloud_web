@@ -17,7 +17,7 @@ async function getWaypoint(mmId: string | undefined, date: string | undefined, l
 }
 
 async function fetchPolygons(): Promise<any> {
-    const response = await fetch('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/all_field');
+    const response = await fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_field');
     const data = await response.json();
     return data;
 }
@@ -25,8 +25,8 @@ async function fetchPolygons(): Promise<any> {
 // async function fetchRoute(mmId: string | undefined, date: string | undefined, logId: string | undefined): Promise<any> {
 //     const fiter_dict = { mm: mmId, date: date, time: logId };
 //     const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
-//     console.log(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-//     const response = await fetch(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+//     console.log(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+//     const response = await fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
 //     const data = await response.json();
 //     return data;
 // }
