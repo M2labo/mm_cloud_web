@@ -12,7 +12,7 @@ interface Customer {
 interface Field {
     id: number;
     name: string;
-    customer_id: number;
+    group_id: number;
 }   
 
 // 子コンポーネントのプロップスの型定義
@@ -22,17 +22,17 @@ interface SelectedFieldProps {
 }
 
 export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedField }) => {
-    const [customer, setCustomer] = useState<string>('選択してください');
+    const [group, setCustomer] = useState<string>('選択してください');
     const [fieldOptions, setFieldOptions] = useState<Field[]>([]);
-    const [customers, setCustomers] = useState<Customer[]>([]);
+    const [groups, setCustomers] = useState<Customer[]>([]);
 
     useEffect(() => {
         // APIからデータを取得する
-        fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_customer')
+        fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_group')
             .then(response => response.json())
             .then((data: any) => {
-                if (data && data.result && Array.isArray(data.result.customers)) {
-                    setCustomers(data.result.customers);
+                if (data && data.result && Array.isArray(data.result.groups)) {
+                    setCustomers(data.result.groups);
                 } else {
                     console.error('Unexpected data format:', data);
                 }
@@ -42,13 +42,13 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
 
     useEffect(() => {
         if (selectedField) {
-            setCustomer(selectedField.customer_id.toString());
-            const customerObj = customers.find(cust => cust.id.toString() === selectedField.customer_id.toString());
-                if (customerObj) {
-                    // フィールドにcustomer_idを追加する
-                    const fieldsWithCustomerId = customerObj.fields.map(field => ({
+            setCustomer(selectedField.group_id.toString());
+            const groupObj = groups.find(group => group.id.toString() === selectedField.group_id.toString());
+                if (groupObj) {
+                    // フィールドにgroup_idを追加する
+                    const fieldsWithCustomerId = groupObj.fields.map(field => ({
                         ...field,
-                        customer_id: customerObj.id
+                        group_id: groupObj.id
                     }));
                     setFieldOptions(fieldsWithCustomerId);
                 } else {
@@ -62,12 +62,12 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
         const selectedCustomer = event.target.value;
         setCustomer(selectedCustomer);
 
-        const customerObj = customers.find(cust => cust.id.toString() === selectedCustomer);
-        if (customerObj) {
-            // フィールドにcustomer_idを追加する
-            const fieldsWithCustomerId = customerObj.fields.map(field => ({
+        const groupObj = groups.find(group => group.id.toString() === selectedCustomer);
+        if (groupObj) {
+            // フィールドにgroup_idを追加する
+            const fieldsWithCustomerId = groupObj.fields.map(field => ({
                 ...field,
-                customer_id: customerObj.id
+                group_id: groupObj.id
             }));
             setFieldOptions(fieldsWithCustomerId);
         } else {
@@ -85,11 +85,11 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
 
     return (
         <div className="p-4 bg-white shadow-2xl border-4 border-gray-800 rounded-lg overflow-wrap-break-word mb-2">
-            <label htmlFor="customer" className="block mb-2">顧客：</label>
-            <select id="customer" value={customer} onChange={handleCustomerChange} className="mb-4 p-2 border rounded w-full">
+            <label htmlFor="group" className="block mb-2">顧客：</label>
+            <select id="group" value={group} onChange={handleCustomerChange} className="mb-4 p-2 border rounded w-full">
                 <option value="選択してください">選択してください</option>
-                {Array.isArray(customers) && customers.map(cust => (
-                    <option key={cust.id} value={cust.id.toString()}>{cust.name}</option>
+                {Array.isArray(groups) && groups.map(group => (
+                    <option key={group.id} value={group.id.toString()}>{group.name}</option>
                 ))}
             </select>
             <label htmlFor="field" className="block mb-2">圃場：</label>

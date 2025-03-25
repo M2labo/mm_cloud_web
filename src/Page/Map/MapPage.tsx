@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 interface Field {
     id: number;
     name: string;
-    customer_id: number;
+    group_id: number;
 }
 
 export function MapPage() {

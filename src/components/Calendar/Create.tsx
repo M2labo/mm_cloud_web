@@ -24,7 +24,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
 
     useEffect(() => {
         // APIからデータを取得する
-        fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_customer')
+        fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_group')
             .then(response => response.json())
             .then((data: any) => {
                 console.log("create"); 
