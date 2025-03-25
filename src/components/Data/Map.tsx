@@ -86,7 +86,7 @@ export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefine
     const [multiPolyline, setMultiPolyline] = useState<LatLngTuple[][]>([[]]);
     const [routePolyline, setRoutePolyline] = useState<LatLngTuple[][]>([[]]);
     const [position, setPosition] = useState<LatLngTuple>(center ? center : [36.252261, 137.866767]);
-    const [polygons, setPolygons] = useState<{ id: number; name: string; customer: string; customer_id: number; polygon: LatLngTuple[] }[]>([]);
+    const [polygons, setPolygons] = useState<{ id: number; name: string; group: string; group_id: number; polygon: LatLngTuple[] }[]>([]);
     const [differences, setDifferences] = useState<number[]>([]);
 
     useEffect(() => {
@@ -139,8 +139,8 @@ export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefine
                     const polygonsData = data.result.fields.map((field: any) => ({
                         id: field.id,
                         name: field.name,
-                        customer: field.customer,
-                        customer_id: field.customer_id,
+                        group: field.group,
+                        group_id: field.group_id,
                         polygon: JSON.parse(field.polygon).map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[]
                     }));
                     setPolygons(polygonsData);
@@ -202,7 +202,7 @@ export const Map: React.FC<{ mmId?: string | undefined; date?: string | undefine
                 {polygons.map(polygon => (
                     <Polygon key={polygon.id} pathOptions={{ color: 'red' }} positions={polygon.polygon}>
                         <Popup>
-                            {polygon.customer} {polygon.name}
+                            {polygon.group} {polygon.name}
                         </Popup>
                     </Polygon>
                 ))}

@@ -39,8 +39,8 @@ interface Event {
 
 export interface Report {
   id: number;
-  customer: string;
-  customer_id: number;
+  group: string;
+  group_id: number;
   field: Field;
   date: string;
   plans: Plan[];
@@ -89,8 +89,8 @@ export function Calendar() {
 
         setSelectedReport({
           id: id,
-          customer_id: data.result.customer_id,
-          customer: data.result.customer,
+          group_id: data.result.group_id,
+          group: data.result.group,
           field: data.result.field,
           date: data.result.date,
           plans: data.result.plans,
@@ -141,8 +141,8 @@ export function Calendar() {
 
       setSelectedReport({
         id: info.event.extendedProps.reportId,
-        customer: data.result.customer,
-        customer_id: data.result.customer_id,
+        group: data.result.group,
+        group_id: data.result.group_id,
         field: data.result.field,
         date: data.result.date,
         plans: data.result.plans,

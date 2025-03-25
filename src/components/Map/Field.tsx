@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-interface Customer {
+interface Group {
     id: number;
     name: string;
     fields: {
@@ -22,9 +22,9 @@ interface SelectedFieldProps {
 }
 
 export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedField }) => {
-    const [group, setCustomer] = useState<string>('選択してください');
+    const [group, setGroup] = useState<string>('選択してください');
     const [fieldOptions, setFieldOptions] = useState<Field[]>([]);
-    const [groups, setCustomers] = useState<Customer[]>([]);
+    const [groups, setGroups] = useState<Group[]>([]);
 
     useEffect(() => {
         // APIからデータを取得する
@@ -32,7 +32,7 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
             .then(response => response.json())
             .then((data: any) => {
                 if (data && data.result && Array.isArray(data.result.groups)) {
-                    setCustomers(data.result.groups);
+                    setGroups(data.result.groups);
                 } else {
                     console.error('Unexpected data format:', data);
                 }
@@ -42,15 +42,15 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
 
     useEffect(() => {
         if (selectedField) {
-            setCustomer(selectedField.group_id.toString());
+            setGroup(selectedField.group_id.toString());
             const groupObj = groups.find(group => group.id.toString() === selectedField.group_id.toString());
                 if (groupObj) {
                     // フィールドにgroup_idを追加する
-                    const fieldsWithCustomerId = groupObj.fields.map(field => ({
+                    const fieldsWithGroupId = groupObj.fields.map(field => ({
                         ...field,
                         group_id: groupObj.id
                     }));
-                    setFieldOptions(fieldsWithCustomerId);
+                    setFieldOptions(fieldsWithGroupId);
                 } else {
                     setFieldOptions([]);
                 }
@@ -58,18 +58,18 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
         }
     }, [selectedField]);
 
-    const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedCustomer = event.target.value;
-        setCustomer(selectedCustomer);
+    const handleGroupChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedGroup = event.target.value;
+        setGroup(selectedGroup);
 
-        const groupObj = groups.find(group => group.id.toString() === selectedCustomer);
+        const groupObj = groups.find(group => group.id.toString() === selectedGroup);
         if (groupObj) {
             // フィールドにgroup_idを追加する
-            const fieldsWithCustomerId = groupObj.fields.map(field => ({
+            const fieldsWithGroupId = groupObj.fields.map(field => ({
                 ...field,
                 group_id: groupObj.id
             }));
-            setFieldOptions(fieldsWithCustomerId);
+            setFieldOptions(fieldsWithGroupId);
         } else {
             setFieldOptions([]);
         }
@@ -86,7 +86,7 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
     return (
         <div className="p-4 bg-white shadow-2xl border-4 border-gray-800 rounded-lg overflow-wrap-break-word mb-2">
             <label htmlFor="group" className="block mb-2">顧客：</label>
-            <select id="group" value={group} onChange={handleCustomerChange} className="mb-4 p-2 border rounded w-full">
+            <select id="group" value={group} onChange={handleGroupChange} className="mb-4 p-2 border rounded w-full">
                 <option value="選択してください">選択してください</option>
                 {Array.isArray(groups) && groups.map(group => (
                     <option key={group.id} value={group.id.toString()}>{group.name}</option>

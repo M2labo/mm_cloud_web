@@ -99,8 +99,8 @@ export function Log() {
                                 onClick={() => handleDetailNavigate(summary.time)}
                             >
                                 <p className="text-lg font-semibold mb-2">{`${summary.time?.slice(0, 2)}:${summary.time?.slice(2, 4)}:${summary.time?.slice(4, 6)}`}</p>
-                                {summary.customer_name && summary.field_name && summary.route_name && (
-                                    <p className='mb-2'>顧客：{summary.customer_name}, ほ場：{summary.field_name}, ルート：{summary.route_name}</p>
+                                {summary.group_name && summary.field_name && summary.route_name && (
+                                    <p className='mb-2'>顧客：{summary.group_name}, ほ場：{summary.field_name}, ルート：{summary.route_name}</p>
                                 )}
                                 <p className='mb-2'>
                                     走行時間：{summary.driving_time.toFixed(0)}秒, 
