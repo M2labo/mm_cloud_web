@@ -4,7 +4,8 @@ import 'leaflet/dist/leaflet.css';
 import { LatLngTuple } from "leaflet";
 
 async function fetchPolygons(): Promise<any> {
-    const response = await fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_field');
+    const filter = JSON.stringify({ group_id: 24 }); // とりあえず固定で24を指定
+    const response = await fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/field?filter=${encodeURIComponent(filter)}`);
     const data = await response.json();
     return data;
 }
