@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface Field {
   id: number;
@@ -13,14 +13,12 @@ interface SelectedFieldProps {
 }
 
 export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedField }) => {
-  const [groupId, setGroupId] = useState<string>('');
   const [fieldOptions, setFieldOptions] = useState<Field[]>([]);
 
   const fetchFieldsByGroup = (groupId: string) => {
     if (!groupId) return;
     
-    // const filter = JSON.stringify({ group_id: groupId });
-    const filter = JSON.stringify({ group_id: 24 }); // とりあえず固定で24を指定
+    const filter = JSON.stringify({ group_id: groupId });
     fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/field?filter=${encodeURIComponent(filter)}`)
       .then(response => response.json())
       .then((data: any) => {
@@ -33,11 +31,9 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
       .catch(error => console.error('Error fetching fields:', error));
   };
 
-  const handleGroupChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newGroupId = event.target.value;
-    setGroupId(newGroupId);
-    fetchFieldsByGroup(newGroupId);
-  };
+  useEffect(() => {
+    fetchFieldsByGroup('24'); // 初期値としてgroup_idを24に固定
+  }, []);
 
   const handleFieldChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedFieldId = event.target.value;
@@ -49,7 +45,6 @@ export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelected
 
   return (
     <div className="p-4 bg-white shadow-2xl border-4 border-gray-800 rounded-lg overflow-wrap-break-word mb-2">
-
       <label htmlFor="field" className="block mb-2">圃場：</label>
       {fieldOptions.length > 0 ? (
         <select
