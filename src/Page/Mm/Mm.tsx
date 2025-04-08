@@ -102,7 +102,6 @@ export function Mm() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto p-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
           <h1 className="text-2xl font-bold mb-4">日付</h1>

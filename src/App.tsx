@@ -13,6 +13,7 @@ import { MapPage } from './Page/Map/MapPage';
 import { Analysis } from './Page/Analysis/Analysis';
 import { Chat } from './Page/Chat/Chat';
 import { UserProvider } from './UserContext';
+import { Header } from './components/Header/Header';
 
 Amplify.configure(config);
 
@@ -63,6 +64,7 @@ export  function App({ signOut, user }: WithAuthenticatorProps) {
   console.log('userId:', userId);
   return (
     <UserProvider cognitoUser={user}>
+      <Header signOut={signOut || (() => {})} />
       <RouterProvider router={router} />
     </UserProvider>
   );

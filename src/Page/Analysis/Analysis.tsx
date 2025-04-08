@@ -181,7 +181,7 @@ export function Analysis() {
 
     return (
         <div className="relative">
-            <Header />
+            
             <div className="m-4">
                 <div className="mb-4">
                     <select

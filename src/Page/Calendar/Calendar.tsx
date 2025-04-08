@@ -178,7 +178,7 @@ export function Calendar() {
 
   return (
     <>
-      <Header />
+      
       <div className="md:flex flex-column md:flex-row">
         <div className="md:w-3/4 p-4">
           <FullCalendar
