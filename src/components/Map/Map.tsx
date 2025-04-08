@@ -2,13 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Polygon, Popup, useMap } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import { LatLngTuple } from "leaflet";
-
-async function fetchPolygons(): Promise<any> {
-    const filter = JSON.stringify({ group_id: 24 }); // とりあえず固定で24を指定
-    const response = await fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/field?filter=${encodeURIComponent(filter)}`);
-    const data = await response.json();
-    return data;
-}
+import { useUser } from '../../UserContext';
 
 interface ChangeMapCenterProps {
     position: LatLngTuple;
@@ -47,26 +41,22 @@ const calculatePolygonCenter = (polygon: LatLngTuple[]): LatLngTuple => {
 };
 
 export const Map: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedField, size, zoom, center }) => {
+    const { user } = useUser();
     const [position, setPosition] = useState<LatLngTuple>(center ? center : [36.252261, 137.866767]);
     const [currentZoom, setCurrentZoom] = useState<number>(zoom ? zoom : 18);
     const [polygons, setPolygons] = useState<{ id: number; name: string; group: string; group_id: number; polygon: LatLngTuple[] }[]>([]);
 
     useEffect(() => {
         let isSubscribed = true;
-        fetchPolygons()
-            .then(data => {
-                if (isSubscribed) {
-                    const polygonsData = data.result.fields.map((field: any) => ({
-                        id: field.id,
-                        name: field.name,
-                        group: field.group,
-                        group_id: field.group_id,
-                        polygon: JSON.parse(field.polygon).map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[]
-                    }));
-                    setPolygons(polygonsData);
-                }
-            })
-            .catch(console.error);
+
+        const polygonsData = user?.fields?.map((field: any) => ({
+            id: field.id,
+            name: field.name,
+            group: field.group,
+            group_id: field.group_id,
+            polygon: JSON.parse(field.polygon).map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[]
+        })) || [];
+        setPolygons(polygonsData);
 
         return () => { isSubscribed = false; };
     }, []);

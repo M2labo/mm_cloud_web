@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useUser } from '../../UserContext';
 
 interface Field {
   id: number;
@@ -14,26 +15,35 @@ interface SelectedFieldProps {
 
 export const Field: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedField }) => {
   const [fieldOptions, setFieldOptions] = useState<Field[]>([]);
+  const { user } = useUser();
 
-  const fetchFieldsByGroup = (groupId: string) => {
-    if (!groupId) return;
+  // const fetchFieldsByGroup = (groupId: string) => {
+  //   if (!groupId) return;
     
-    const filter = JSON.stringify({ group_id: groupId });
-    fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/field?filter=${encodeURIComponent(filter)}`)
-      .then(response => response.json())
-      .then((data: any) => {
-        if (data?.result?.fields && Array.isArray(data.result.fields)) {
-          setFieldOptions(data.result.fields);
-        } else {
-          console.error('Unexpected data format:', data);
-        }
-      })
-      .catch(error => console.error('Error fetching fields:', error));
-  };
+  //   const filter = JSON.stringify({ group_id: groupId });
+  //   fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/field?filter=${encodeURIComponent(filter)}`)
+  //     .then(response => response.json())
+  //     .then((data: any) => {
+  //       if (data?.result?.fields && Array.isArray(data.result.fields)) {
+  //         setFieldOptions(data.result.fields);
+  //       } else {
+  //         console.error('Unexpected data format:', data);
+  //       }
+  //     })
+  //     .catch(error => console.error('Error fetching fields:', error));
+  // };
+
+  // useEffect(() => {
+  //   fetchFieldsByGroup('24'); // 初期値としてgroup_idを24に固定
+  // }, []);
 
   useEffect(() => {
-    fetchFieldsByGroup('24'); // 初期値としてgroup_idを24に固定
-  }, []);
+    if (user) {
+      setFieldOptions(user.fields);
+    } else {
+      setFieldOptions([]);
+    }
+  }, [user]);
 
   const handleFieldChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedFieldId = event.target.value;
