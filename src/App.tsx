@@ -12,6 +12,15 @@ import { Calendar } from './Page/Calendar/Calendar';
 import { MapPage } from './Page/Map/MapPage';
 import { Analysis } from './Page/Analysis/Analysis';
 import { Chat } from './Page/Chat/Chat';
+import {Setting} from "./Page/Setting/Setting";
+import {Profile} from "./Page/Setting/Profile";
+import {SettingList} from "./Page/Setting/SettingList";
+import {Group} from "./Page/Setting/Group";
+import {Mover} from "./Page/Setting/Mover";
+import {Field} from "./Page/Setting/Field";
+import {Version} from "./Page/Setting/Version";
+import {TermsOfService} from "./Page/Setting/TermsOfService";
+import {PrivacyPolicy} from "./Page/Setting/PrivacyPolicy";
 
 Amplify.configure(config);
 
@@ -50,6 +59,20 @@ const router = createHashRouter([
   {
     path: "/chat",
     element: <Chat />,
+  },
+  {
+    path: "/setting",
+    element: <Setting />,
+    children: [
+      { index: true, element: <SettingList /> },
+      { path: 'profile', element: <Profile /> },
+      { path: 'group', element: <Group /> },
+      { path: 'mover', element: <Mover /> },
+      { path: 'field', element: <Field /> },
+      { path: 'version', element: <Version /> },
+      { path: 'terms_of_service', element: <TermsOfService /> },
+      { path: 'privacy_policy', element: <PrivacyPolicy /> },
+    ]
   },
 
 

@@ -38,6 +38,7 @@ export const Header = () => {
             <li><a href="#map" className="block p-4 text-white hover:bg-gray-700">MAP</a></li>
             <li><a href="#calendar" className="block p-4 text-white hover:bg-gray-700">CALENDAR</a></li>
             <li><a href="#" className="block p-4 text-white hover:bg-gray-700">LOG</a></li>
+            <li><a href="#setting" className="block p-4 text-white hover:bg-gray-700">SETTING</a></li>
             {/* <li><a href="#analysis" className="block p-4 text-white hover:bg-gray-700">ANALYSIS</a></li>
             <li><a href="#chat" className="block p-4 text-white hover:bg-gray-700">CHAT</a></li> */}
           </ul>
@@ -48,6 +49,7 @@ export const Header = () => {
         <li><a href="#map" className="hover:bg-gray-700 p-2 rounded">MAP</a></li>
         <li><a href="#calendar" className="hover:bg-gray-700 p-2 rounded">CALENDAR</a></li>
         <li><a href="#" className="hover:bg-gray-700 p-2 rounded">LOG</a></li>
+        <li><a href="#setting" className="hover:bg-gray-700 p-2 rounded">SETTING</a></li>
         {/* <li><a href="#analysis" className="hover:bg-gray-700 p-2 rounded">ANALYSIS</a></li>
         <li><a href="#chat" className="hover:bg-gray-700 p-2 rounded">CHAT</a></li> */}
       </ul>
