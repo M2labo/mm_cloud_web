@@ -39,8 +39,8 @@ interface Event {
 
 export interface Report {
   id: number;
-  customer: string;
-  customer_id: number;
+  group: string;
+  group_id: number;
   field: Field;
   date: string;
   plans: Plan[];
@@ -67,7 +67,7 @@ export function Calendar() {
       //APIから詳細情報を取得
       console.log("詳細画面を変更");
       try {
-        const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
+        const url = new URL('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/report');
         const filter = JSON.stringify({ id: id });
         url.searchParams.append('filter', filter);
         console.log("filter");
@@ -89,8 +89,8 @@ export function Calendar() {
 
         setSelectedReport({
           id: id,
-          customer_id: data.result.customer_id,
-          customer: data.result.customer,
+          group_id: data.result.group_id,
+          group: data.result.group,
           field: data.result.field,
           date: data.result.date,
           plans: data.result.plans,
@@ -120,7 +120,7 @@ export function Calendar() {
     
     //APIから詳細情報を取得
     try {
-      const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
+      const url = new URL('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/report');
       const filter = JSON.stringify({ id: info.event.extendedProps.reportId });
       url.searchParams.append('filter', filter);
 
@@ -141,8 +141,8 @@ export function Calendar() {
 
       setSelectedReport({
         id: info.event.extendedProps.reportId,
-        customer: data.result.customer,
-        customer_id: data.result.customer_id,
+        group: data.result.group,
+        group_id: data.result.group_id,
         field: data.result.field,
         date: data.result.date,
         plans: data.result.plans,
@@ -161,7 +161,7 @@ export function Calendar() {
   //APIから全ての予定と結果を取得
   useEffect(() => {
     // APIからデータを取得する
-    fetch('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/all_calendar')
+    fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_calendar')
         .then(response => response.json())
         .then((data: any) => {
             console.log(data); // レスポンスデータの形式を確認
@@ -178,7 +178,7 @@ export function Calendar() {
 
   return (
     <>
-      <Header />
+      
       <div className="md:flex flex-column md:flex-row">
         <div className="md:w-3/4 p-4">
           <FullCalendar

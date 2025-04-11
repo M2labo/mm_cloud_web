@@ -57,7 +57,7 @@ export function Chat() {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
+      
       <div className="flex flex-col max-w-md mx-auto p-4 h-full">
         <div className="flex-1 overflow-y-scroll p-4">
           <div className="space-y-4">

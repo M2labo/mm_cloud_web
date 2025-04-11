@@ -14,7 +14,7 @@ export function Detail() {
 
     return (
         <div className="relative">
-            <Header />
+            
             <div className="h-full">
                 {under === 'map' ? (
                     <>

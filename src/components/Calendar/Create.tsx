@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-interface Customer {
+interface Group {
     id: number;
     name: string;
     fields: {
@@ -15,22 +15,22 @@ interface CreateProps {
 }
 
 export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) => {
-    const [customer, setCustomer] = useState<string>('選択してください');
+    const [group, setGroup] = useState<string>('選択してください');
     const [fieldOptions, setFieldOptions] = useState<{ id: number, name: string }[]>([]);
     const [selectedField, setSelectedField] = useState('選択してください');
     const [dates, setDates] = useState([selectedDate]);
     const [content, setContent] = useState('');
-    const [customers, setCustomers] = useState<Customer[]>([]);
+    const [groups, setGroups] = useState<Group[]>([]);
 
     useEffect(() => {
         // APIからデータを取得する
-        fetch('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/all_customer')
+        fetch('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/all_group')
             .then(response => response.json())
             .then((data: any) => {
                 console.log("create"); 
                 console.log(data); // レスポンスデータの形式を確認
-                if (data && data.result && Array.isArray(data.result.customers)) {
-                    setCustomers(data.result.customers);
+                if (data && data.result && Array.isArray(data.result.groups)) {
+                    setGroups(data.result.groups);
                 } else {
                     console.error('Unexpected data format:', data);
                 }
@@ -45,13 +45,13 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
         }
     }, [selectedDate]);
 
-    const handleCustomerChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedCustomer = event.target.value;
-        setCustomer(selectedCustomer);
+    const handleGroupChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedGroup = event.target.value;
+        setGroup(selectedGroup);
 
-        const customerObj = customers.find(cust => cust.id.toString() === selectedCustomer);
-        if (customerObj) {
-            setFieldOptions(customerObj.fields);
+        const groupObj = groups.find(cust => cust.id.toString() === selectedGroup);
+        if (groupObj) {
+            setFieldOptions(groupObj.fields);
         } else {
             setFieldOptions([]);
         }
@@ -84,18 +84,18 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
 
     const handleCreateClick = async () => {
         console.log('Create clicked');
-        console.log(customer, selectedField, dates, content);
+        console.log(group, selectedField, dates, content);
         try {
-            const selectedCustomer = customers.find(cust => cust.id.toString() === customer);
+            const selectedGroup = groups.find(cust => cust.id.toString() === group);
             const selectedFieldObj = fieldOptions.find(field => field.name === selectedField);
 
-            if (!selectedCustomer || !selectedFieldObj) {
+            if (!selectedGroup || !selectedFieldObj) {
                 alert('顧客または圃場が正しく選択されていません。');
                 return;
             }
 
-            const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
-            console.log('Selected customer:', selectedCustomer.id);
+            const url = new URL('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/report');
+            console.log('Selected group:', selectedGroup.id);
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -104,7 +104,7 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
                 },
                 body: JSON.stringify({
                     data: {
-                        customer_id: selectedCustomer.id,
+                        group_id: selectedGroup.id,
                         field_id: selectedFieldObj.id,
                         plans: dates,
                         date: null,
@@ -129,10 +129,10 @@ export const Create: React.FC<CreateProps> = ({ selectedDate, onChangeDetail }) 
     return (
         <div className="p-4 bg-white shadow-md rounded-lg overflow-wrap-break-word">
             <h1 className="text-2xl font-bold mb-4">作業予定-作成</h1>
-            <label htmlFor="customer" className="block mb-2">顧客：</label>
-            <select id="customer" value={customer} onChange={handleCustomerChange} className="mb-4 p-2 border rounded w-full">
+            <label htmlFor="group" className="block mb-2">顧客：</label>
+            <select id="group" value={group} onChange={handleGroupChange} className="mb-4 p-2 border rounded w-full">
                 <option value="選択してください">選択してください</option>
-                {Array.isArray(customers) && customers.map(cust => (
+                {Array.isArray(groups) && groups.map(cust => (
                     <option key={cust.id} value={cust.id.toString()}>{cust.name}</option>
                 ))}
             </select>

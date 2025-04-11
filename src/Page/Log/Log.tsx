@@ -7,8 +7,8 @@ import { Header } from '../../components/Header/Header';
 async function fetchSummary(mmId: string | undefined, date: string | undefined): Promise<any> {
     const filter_dict = { mm: mmId, date: date };
     const queryParams = new URLSearchParams({ filter: JSON.stringify(filter_dict) });
-    console.log(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-    const response = await fetch(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/summary?${queryParams}`);
+    console.log(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+    const response = await fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/summary?${queryParams}`);
     const data = await response.json();
     return data;
 }
@@ -43,7 +43,7 @@ export function Log() {
         // コメント投稿のロジックをここに追加
         console.log(`コメントを投稿: ${time}, ${comment}`);
         try {
-            const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log');
+            const url = new URL('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/log');
 
             const response = await fetch(url, {
                 method: 'POST',
@@ -88,7 +88,7 @@ export function Log() {
 
     return (
         <>
-            <Header />
+            
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4 text-center md:text-left">時刻</h1>
                 <ul className="list-none">
@@ -99,8 +99,8 @@ export function Log() {
                                 onClick={() => handleDetailNavigate(summary.time)}
                             >
                                 <p className="text-lg font-semibold mb-2">{`${summary.time?.slice(0, 2)}:${summary.time?.slice(2, 4)}:${summary.time?.slice(4, 6)}`}</p>
-                                {summary.customer_name && summary.field_name && summary.route_name && (
-                                    <p className='mb-2'>顧客：{summary.customer_name}, ほ場：{summary.field_name}, ルート：{summary.route_name}</p>
+                                {summary.group_name && summary.field_name && summary.route_name && (
+                                    <p className='mb-2'>顧客：{summary.group_name}, ほ場：{summary.field_name}, ルート：{summary.route_name}</p>
                                 )}
                                 <p className='mb-2'>
                                     走行時間：{summary.driving_time.toFixed(0)}秒, 

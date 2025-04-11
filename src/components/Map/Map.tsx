@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Polygon, Popup, useMap } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import { LatLngTuple } from "leaflet";
-
-async function fetchPolygons(): Promise<any> {
-    const response = await fetch('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/all_field');
-    const data = await response.json();
-    return data;
-}
+import { useUser } from '../../UserContext';
 
 interface ChangeMapCenterProps {
     position: LatLngTuple;
@@ -25,7 +20,7 @@ function ChangeMapCenter({ position, zoom }: ChangeMapCenterProps) {
 interface Field {
     id: number;
     name: string;
-    customer_id: number;
+    group_id: number;
 }  
 
 interface SelectedFieldProps {
@@ -46,26 +41,22 @@ const calculatePolygonCenter = (polygon: LatLngTuple[]): LatLngTuple => {
 };
 
 export const Map: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedField, size, zoom, center }) => {
+    const { user } = useUser();
     const [position, setPosition] = useState<LatLngTuple>(center ? center : [36.252261, 137.866767]);
     const [currentZoom, setCurrentZoom] = useState<number>(zoom ? zoom : 18);
-    const [polygons, setPolygons] = useState<{ id: number; name: string; customer: string; customer_id: number; polygon: LatLngTuple[] }[]>([]);
+    const [polygons, setPolygons] = useState<{ id: number; name: string; group: string; group_id: number; polygon: LatLngTuple[] }[]>([]);
 
     useEffect(() => {
         let isSubscribed = true;
-        fetchPolygons()
-            .then(data => {
-                if (isSubscribed) {
-                    const polygonsData = data.result.fields.map((field: any) => ({
-                        id: field.id,
-                        name: field.name,
-                        customer: field.customer,
-                        customer_id: field.customer_id,
-                        polygon: JSON.parse(field.polygon).map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[]
-                    }));
-                    setPolygons(polygonsData);
-                }
-            })
-            .catch(console.error);
+
+        const polygonsData = user?.fields?.map((field: any) => ({
+            id: field.id,
+            name: field.name,
+            group: field.group,
+            group_id: field.group_id,
+            polygon: JSON.parse(field.polygon).map((coord: number[]) => [coord[0], coord[1]]) as LatLngTuple[]
+        })) || [];
+        setPolygons(polygonsData);
 
         return () => { isSubscribed = false; };
     }, []);
@@ -81,8 +72,8 @@ export const Map: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedFi
         }
     }, [selectedField, polygons]);
 
-    const handlePolygonClick = (polygon: { id: number; name: string; customer: string; customer_id: number; polygon: LatLngTuple[] }) => {
-        setSelectedField({ id: polygon.id, name: polygon.name, customer_id: polygon.customer_id });
+    const handlePolygonClick = (polygon: { id: number; name: string; group: string; group_id: number; polygon: LatLngTuple[] }) => {
+        setSelectedField({ id: polygon.id, name: polygon.name, group_id: polygon.group_id });
     };
 
     return (
@@ -102,7 +93,7 @@ export const Map: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedFi
                         }}
                     >
                         <Popup>
-                            {polygon.customer} {polygon.name}
+                            {polygon.group} {polygon.name}
                         </Popup>
                     </Polygon>
                 ))}

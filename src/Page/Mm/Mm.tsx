@@ -8,8 +8,8 @@ import { Header } from '../../components/Header/Header';
 async function fetchSummary(mmId: string | undefined): Promise<any> {
   const fiter_dict = { mm: mmId};
   const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
-  console.log(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-  const response = await fetch(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/summary?${queryParams}`);
+  console.log(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+  const response = await fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/summary?${queryParams}`);
   const data = await response.json();
   return data;
 }
@@ -102,7 +102,6 @@ export function Mm() {
 
   return (
     <>
-      <Header />
       <div className="container mx-auto p-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
           <h1 className="text-2xl font-bold mb-4">日付</h1>

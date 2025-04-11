@@ -12,6 +12,8 @@ import { Calendar } from './Page/Calendar/Calendar';
 import { MapPage } from './Page/Map/MapPage';
 import { Analysis } from './Page/Analysis/Analysis';
 import { Chat } from './Page/Chat/Chat';
+import { UserProvider } from './UserContext';
+import { Header } from './components/Header/Header';
 
 Amplify.configure(config);
 
@@ -58,12 +60,13 @@ const router = createHashRouter([
 
 
 export  function App({ signOut, user }: WithAuthenticatorProps) {
-  
+  const userId = user?.username;
+  console.log('userId:', userId);
   return (
-    <>
-
+    <UserProvider cognitoUser={user}>
+      <Header signOut={signOut || (() => {})} />
       <RouterProvider router={router} />
-    </>
+    </UserProvider>
   );
 }
 

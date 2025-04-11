@@ -18,7 +18,7 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
     const handleCompletion = async () => {
         
         try {
-            const url = new URL('https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/report');
+            const url = new URL('https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/report');
             const filter = JSON.stringify({ id: selectedReport.id });
             url.searchParams.append('filter', filter);
 
@@ -62,7 +62,7 @@ export const EditResult: React.FC<ReportProps> = ({ selectedReport }) => {
     return (
         <div className="p-4 bg-white shadow-md rounded-lg overflow-wrap-break-word">
             <h1 className="text-2xl font-bold mb-4">作業結果-編集</h1>
-            <p className="mb-2">顧客：{selectedReport.customer}</p>
+            <p className="mb-2">顧客：{selectedReport.group}</p>
             <p className="mb-2">
                 圃場：{selectedReport.field.name} ({selectedReport.field.area}a) /
                 <a href={selectedReport.field.url} target="_blank" rel="noreferrer noopener" className="text-blue-500 hover:underline">Mapを表示</a>

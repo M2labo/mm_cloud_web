@@ -7,8 +7,8 @@ import { Header } from '../../components/Header/Header';
 async function fetchSummary(): Promise<any> {
     // const fiter_dict = {};
     // const queryParams = new URLSearchParams({ filter: JSON.stringify(fiter_dict) });
-    // console.log(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
-    const response = await fetch(`https://hjye2epvlltzqedatmaukpwm4e0iderg.lambda-url.ap-northeast-1.on.aws/summary`);
+    // console.log(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/log?${queryParams}`);
+    const response = await fetch(`https://xeqdcwoajut7yi6v6pjeucmc640azjxy.lambda-url.ap-northeast-1.on.aws/summary`);
     const data = await response.json();
     return data;
 }
@@ -57,7 +57,7 @@ export function Top() {
     
     return (
         <>
-            <Header />
+            
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4 text-center md:text-left">MobileMover</h1>
                 {/* <ul className="list-none">
