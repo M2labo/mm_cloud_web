@@ -40,6 +40,7 @@ export const Header = ({ signOut }: { signOut: () => void }) => {
             <li><a href="#calendar" className="block p-4 text-white hover:bg-gray-700">CALENDAR</a></li>
             <li><a href="#" className="block p-4 text-white hover:bg-gray-700">LOG</a></li>
             <li><a href="#analysis" className="block p-4 text-white hover:bg-gray-700">ANALYSIS</a></li>
+            <li><a href="#setting" className="block p-4 text-white hover:bg-gray-700">SETTING</a></li>
             {/* <li><a href="#chat" className="block p-4 text-white hover:bg-gray-700">CHAT</a></li> */}
             <li>
               <button onClick={signOut} className="block p-4 text-white hover:bg-gray-700 w-full text-left">
@@ -55,6 +56,7 @@ export const Header = ({ signOut }: { signOut: () => void }) => {
         <li><a href="#calendar" className="hover:bg-gray-700 p-2 rounded text-white inline-block">CALENDAR</a></li>
         <li><a href="#" className="hover:bg-gray-700 p-2 rounded text-white inline-block">LOG</a></li>
         <li><a href="#analysis" className="hover:bg-gray-700 p-2 rounded text-white inline-block">ANALYSIS</a></li>
+        <li><a href="#setting" className="hover:bg-gray-700 p-2 rounded">SETTING</a></li>
         {/* <li><a href="#chat" className="hover:bg-gray-700 p-2 rounded text-white inline-block">CHAT</a></li> */}
         <li>
           <button
@@ -65,7 +67,6 @@ export const Header = ({ signOut }: { signOut: () => void }) => {
           </button>
         </li>
       </ul>
-
     </header>
   );
 };
