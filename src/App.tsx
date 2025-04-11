@@ -14,7 +14,6 @@ import { Analysis } from './Page/Analysis/Analysis';
 import { Chat } from './Page/Chat/Chat';
 import {Setting} from "./Page/Setting/Setting";
 import {Profile} from "./Page/Setting/Profile";
-import {SettingList} from "./Page/Setting/SettingList";
 import {Group} from "./Page/Setting/Group";
 import {Mover} from "./Page/Setting/Mover";
 import {Field} from "./Page/Setting/Field";
@@ -64,9 +63,8 @@ const router = createHashRouter([
   },
   {
     path: "/setting",
-    element: <Setting />,
     children: [
-      { index: true, element: <SettingList /> },
+      { index: true, element: <Setting /> },
       { path: 'profile', element: <Profile /> },
       { path: 'group', element: <Group /> },
       { path: 'mover', element: <Mover /> },
