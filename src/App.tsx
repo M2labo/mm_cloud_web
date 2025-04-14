@@ -17,7 +17,6 @@ import {Profile} from "./Page/Setting/Profile";
 import {Group} from "./Page/Setting/Group";
 import {Mover} from "./Page/Setting/Mover";
 import {Field} from "./Page/Setting/Field";
-import {Version} from "./Page/Setting/Version";
 import {TermsOfService} from "./Page/Setting/TermsOfService";
 import {PrivacyPolicy} from "./Page/Setting/PrivacyPolicy";
 import { UserProvider } from './UserContext';
@@ -69,7 +68,6 @@ const router = createHashRouter([
       { path: 'group', element: <Group /> },
       { path: 'mover', element: <Mover /> },
       { path: 'field', element: <Field /> },
-      { path: 'version', element: <Version /> },
       { path: 'terms_of_service', element: <TermsOfService /> },
       { path: 'privacy_policy', element: <PrivacyPolicy /> },
     ]
