@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import {useAuthenticator} from "@aws-amplify/ui-react";
 
-
-export const Header = ({ signOut }: { signOut: () => void }) => {
+export const Header = () => {
+  const {signOut} = useAuthenticator()
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
