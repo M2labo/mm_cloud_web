@@ -78,12 +78,12 @@ const router = createHashRouter([
 
 
 
-export  function App({ signOut, user }: WithAuthenticatorProps) {
+export  function App({ user }: WithAuthenticatorProps) {
   const userId = user?.username;
   console.log('userId:', userId);
   return (
     <UserProvider cognitoUser={user}>
-      <Header signOut={signOut || (() => {})} />
+      <Header />
       <RouterProvider router={router} />
     </UserProvider>
   );
