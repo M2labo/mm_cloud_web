@@ -51,6 +51,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children, cognitoUse
 
       const movers: Mover[] = body.movers.map((mover: any) => ({
         ...mover,
+        macAddress: mover.mac_address,
         rtkId: mover.rtk_id,
       }));
 
@@ -58,6 +59,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children, cognitoUse
         ...body.user,
         fields,
         movers,
+        groupId: body.user.group_id
       };
 
       setUser(userData);
