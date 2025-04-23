@@ -49,8 +49,9 @@ export const Profile = () => {
       <p>メールアドレス</p>
       <p>{user.email}</p>
       <div>
-        <label>名前</label><br/>
+        <label htmlFor="name-input">名前</label>
         <input
+          id={'name-input'}
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="名前"
