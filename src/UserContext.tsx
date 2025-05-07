@@ -1,6 +1,8 @@
 // UserContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Field, Mover } from './models';
+import {AuthUser} from "@aws-amplify/auth";
+import {RegisterFarm} from "./components/Dialog/RegisterFarm";
 
 interface UserContextType {
   user: User | null;
@@ -12,11 +14,12 @@ export { UserContext };
 
 interface UserProviderProps {
   children: React.ReactNode;
-  cognitoUser: any; // 型が分かっていればここを適切に設定
+  cognitoUser?: AuthUser;
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children, cognitoUser }): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
+  const [isUnregistered, setIsUnregistered] = useState(false)
 
   const fetchUserData = async () => {
     try {
@@ -65,6 +68,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children, cognitoUse
       setUser(userData);
       console.log('userData:', userData);
     } catch (error) {
+      setIsUnregistered(true)
       console.error('Error fetching user:', error);
     }
   };
@@ -75,7 +79,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children, cognitoUse
 
   return (
     <UserContext.Provider value={{ user, fetchUserData }}>
-      {children}
+      {user && children}
+      {isUnregistered && <RegisterFarm fetchUserData={fetchUserData} cognitoUser={cognitoUser} setIsUnregistered={setIsUnregistered}/>}
     </UserContext.Provider>
   );
 };
