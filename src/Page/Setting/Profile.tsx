@@ -33,8 +33,8 @@ export const Profile = () => {
           filter: JSON.stringify({id: user?.id}),
         },
       });
-      alert('アカウントが削除されました');
       signOut();
+      alert('アカウントが削除されました');
     } catch (err) {
       alert(`アカウント削除に失敗しました: ${err}`);
     }
