@@ -5,7 +5,7 @@ import '@aws-amplify/ui-react/styles.css';
 import config from './amplifyconfiguration.json';
 import {createHashRouter, RouterProvider} from "react-router-dom";
 import { Detail } from './Page/Detail/Detail';
-import { Top } from './Page/Top/Top';
+import { AllLog } from './Page/Log/AllLog';
 import { Log } from './Page/Log/Log';
 import { Mm } from './Page/Mm/Mm';
 import { Calendar } from './Page/Calendar/Calendar';
@@ -30,11 +30,15 @@ Amplify.configure(config);
 const router = createHashRouter([
   {
     path: '/',
-    element: <Top />,
+    element: <MapPage />,
   },
   {
     path: "/mm/:mmId",
     element: <Mm />,
+  },
+  {
+    path: '/log',
+    element: <AllLog />,
   },
   {
     path: '/log/:mmId/:date',
@@ -47,10 +51,6 @@ const router = createHashRouter([
   {
     path: "/calendar",
     element: <Calendar />,
-  },
-  {
-    path: "/map",
-    element: <MapPage />,
   },
   {
     path: "/analysis",
