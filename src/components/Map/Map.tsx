@@ -23,7 +23,7 @@ interface Field {
     group_id: number;
 }  
 
-interface SelectedFieldProps {
+interface Props {
     selectedField: Field | null;
     setSelectedField: React.Dispatch<React.SetStateAction<Field | null>>;
     size?: string;
@@ -41,7 +41,7 @@ const calculatePolygonCenter = (polygon: LatLngTuple[]): LatLngTuple => {
     return [sum[0] / polygon.length, sum[1] / polygon.length] as LatLngTuple;
 };
 
-export const Map: React.FC<SelectedFieldProps> = ({ selectedField, setSelectedField, size, zoom, center, children }) => {
+export const Map: React.FC<Props> = ({ selectedField, setSelectedField, size, zoom, center, children }) => {
     const { user } = useUser();
     const [position, setPosition] = useState<LatLngTuple>(center ? center : [36.252261, 137.866767]);
     const [currentZoom, setCurrentZoom] = useState<number>(zoom ? zoom : 18);
