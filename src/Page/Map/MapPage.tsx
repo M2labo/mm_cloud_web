@@ -11,6 +11,7 @@ import jaLocale from "@fullcalendar/core/locales/ja";
 import FullCalendar from "@fullcalendar/react";
 import {Scatter} from "../../components/Map/Scatter";
 import {GradientBar} from "../../components/Map/GradientBar";
+import {DrivingRoute} from "../../components/Map/DrivingRoute";
 
 interface LocalField {
   id: number;
@@ -50,6 +51,7 @@ export function MapPage() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Scatter selectedField={selectedField}/>
+          <DrivingRoute selectedField={selectedField} />
         </Map>
         <div className="absolute top-0 right-0 p-4" style={{zIndex: 1000}}>
           <Field selectedField={selectedField} setSelectedField={setSelectedField}/>

@@ -21,7 +21,7 @@ export const Scatter: React.FC<Props> = ({selectedField}) => {
   return (
     <>
       {samplePoints.map((point, i) => (
-        <Circle center={point} radius={i * 2 + 5} pathOptions={{color: getGradientColor(i / samplePoints.length)}}/>
+        <Circle key={i} center={point} radius={i * 2 + 5} pathOptions={{color: getGradientColor(i / samplePoints.length)}}/>
         )
       )}
     </>
