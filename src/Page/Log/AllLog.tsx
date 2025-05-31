@@ -13,7 +13,7 @@ async function fetchSummary(): Promise<any> {
     return data;
 }
 
-export function Top() {
+export function AllLog() {
     const navigate = useNavigate();
     const [mm, setMm] = useState<String[]>([]);
     const [summaries, setSummaries] = useState<any[]>([]);
