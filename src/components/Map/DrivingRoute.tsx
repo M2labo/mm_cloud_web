@@ -1,27 +1,16 @@
 import React from 'react';
 import {Polygon, Polyline} from 'react-leaflet';
-import {makeInnerPolyline} from "./makeInnerPolyline";
 import {makePolygonAroundPolyline} from "./makePolygonAroundPolyline";
-import {makeTemperature} from "./makeTemperature";
 
-
-interface Field {
-  id: number;
-  name: string;
-  group_id?: number;
-  polygon: string;
-}
 
 interface Props {
-  selectedField: Field | null;
+  uPath?: [number, number][];
 }
 
 
-export const DrivingRoute = ({selectedField}: Props) => {
-  if (!selectedField || !selectedField.polygon) return null
-  const polygon: number[][] = JSON.parse(selectedField?.polygon)
+export const DrivingRoute = ({uPath}: Props) => {
+  if(!uPath) return null
 
-  const uPath = makeInnerPolyline(polygon)
   const polygonsAroundPolyline = makePolygonAroundPolyline(uPath)
 
   return (

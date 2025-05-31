@@ -1,5 +1,5 @@
 import React, {ReactNode, useEffect, useState} from 'react';
-import { MapContainer, TileLayer, Polygon, Popup, useMap } from "react-leaflet";
+import { MapContainer, Polygon, Popup, useMap } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import { LatLngTuple } from "leaflet";
 import { useUser } from '../../UserContext';
@@ -74,6 +74,8 @@ export const Map: React.FC<Props> = ({ selectedField, setSelectedField, size, zo
     }, [selectedField, polygons]);
 
     const handlePolygonClick = (polygon: { id: number; name: string; group: string; group_id: number; polygon: LatLngTuple[] }) => {
+        if (selectedField?.id === polygon.id) return
+
         setSelectedField({ id: polygon.id, name: polygon.name, group_id: polygon.group_id });
     };
 

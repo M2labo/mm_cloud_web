@@ -29,18 +29,6 @@ export function getGradientColor(value: number): string {
   const c0 = stops[idx];
   const c1 = stops[idx + 1];
 
-  // "#RRGGBB" → [R, G, B]
-  const hexToRgb = (hex: string): [number, number, number] => {
-    const m = hex.match(/^#?([A-Fa-f0-9]{6})$/);
-    if (!m) throw new Error(`Invalid hex color: ${hex}`);
-    const int = parseInt(m[1], 16);
-    return [
-      (int >> 16) & 0xff,
-      (int >> 8) & 0xff,
-      int & 0xff,
-    ];
-  };
-
   const [r0, g0, b0] = hexToRgb(c0);
   const [r1, g1, b1] = hexToRgb(c1);
 
@@ -53,3 +41,15 @@ export function getGradientColor(value: number): string {
   const toHex = (x: number) => x.toString(16).padStart(2, '0');
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
+
+// "#RRGGBB" → [R, G, B]
+export const hexToRgb = (hex: string): [number, number, number] => {
+  const m = hex.match(/^#?([A-Fa-f0-9]{6})$/);
+  if (!m) throw new Error(`Invalid hex color: ${hex}`);
+  const int = parseInt(m[1], 16);
+  return [
+    (int >> 16) & 0xff,
+    (int >> 8) & 0xff,
+    int & 0xff,
+  ];
+};

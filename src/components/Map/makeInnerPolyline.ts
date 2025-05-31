@@ -69,8 +69,8 @@ export function makeInnerPolyline(
   for (let i = 0; i < inner.length - 1; i++) {
     const [prevLat, prevLng] = inner[i]
     const [nextLat, nextLng] = inner[i + 1]
-    for (let j = 0; j < 10; j++) {
-      const t = j / 10;
+    for (let j = 0; j < 3; j++) {
+      const t = j / 3;
       detailedInner.push([
         prevLat + (nextLat - prevLat) * t,
         prevLng + (nextLng - prevLng) * t
